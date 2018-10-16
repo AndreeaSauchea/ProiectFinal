@@ -4,21 +4,24 @@ import java.util.List;
 
 public class Factura {
 
-   private Client client;
-    private Room room;
+    private BookedRoom room;
     private double totalServicePrices = 0;
     private double total;
 
-    public Factura(Client client){
-        this.client = client;
+    public Factura(BookedRoom room){
+        this.room = room;
     }
 
-    public double calculateTotalSevicePrices(){
-        List<Services> services1 = client.getServices();
-        for (Services services : services1){
-            totalServicePrices += services.getServicePrice();
+    private double calculateTotalSevicePrices(){
+        List<Service> service1 = room.getServices();
+        if (service1 == null){
+            return 0;
+        } else {
+            for (Service service : service1) {
+                totalServicePrices += service.getServicePrice();
+            }
+            return totalServicePrices;
         }
-        return totalServicePrices;
     }
 
     public double generateFactura() {

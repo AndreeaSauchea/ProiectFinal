@@ -1,12 +1,13 @@
 package proiectfinal;
 
 import java.util.List;
+import java.util.Set;
 
 public class Maid extends Human {
 
     private List<Room> rooms;
 
-    public Maid(String name, String vorname, String cnp, List<Room> rooms){
+    public Maid(String name, String vorname, String cnp, Set<Room> rooms){
         super(name, vorname, cnp);
         this.getRooms();
     }

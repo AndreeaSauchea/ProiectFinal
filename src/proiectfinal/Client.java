@@ -6,35 +6,15 @@ import java.util.List;
 public class Client extends Human {
 
     private long duration;
-    private int roomNumber;
-    private List<Services> services;
     private Date checkIn;
     private Date checkOut;
-    private Room room;
-    private int numberFromRoom = room.getNumberForRoom();
 
-    public Client(Date checkIn, Date checkOut, int numberFromRoom, String name, String vorname, String cnp){
+
+    public Client(Date checkIn, Date checkOut, String name, String vorname, String cnp){
         super(name, vorname, cnp);
         this.checkIn = checkIn;
         this.checkOut = checkOut;
-        this.roomNumber = numberFromRoom;
         calculateDuration();
-    }
-
-    public int getRoomNumber() {
-        return roomNumber;
-    }
-
-    public void setRoomNumber(int roomNumber) {
-        this.roomNumber = roomNumber;
-    }
-
-    public List<Services> getServices() {
-        return services;
-    }
-
-    public void setServices(List<Services> services) {
-        this.services = services;
     }
 
     public Date getCheckIn() {

@@ -1,24 +1,24 @@
 package proiectfinal;
 
+import java.util.Objects;
+
 public class Room {
 
-    private int numberForRoom;
+    private int roomNumber;
     private double nightlyPrice;
-    private double totalPrice;
     private int numberPlaces;
-    private Client client;
 
-    public Room (int numberForRoom){
-        this.numberForRoom = numberForRoom;
-        calculateTotalPrice();
+    public Room (int roomNumber, double nightlyPrice){
+        this.roomNumber = roomNumber;
+        this.nightlyPrice = nightlyPrice;
     }
 
-    public int getNumberForRoom() {
-        return numberForRoom;
+    public int getRoomNumber() {
+        return roomNumber;
     }
 
-    public void setNumberForRoom(int numberForRoom) {
-        this.numberForRoom = numberForRoom;
+    public void setRoomNumber(int roomNumber) {
+        this.roomNumber = roomNumber;
     }
 
     public double getNightlyPrice() {
@@ -29,19 +29,26 @@ public class Room {
         this.nightlyPrice = nightlyPrice;
     }
 
-    public void calculateTotalPrice (){
-        this.totalPrice = nightlyPrice * client.getDuration();
-    }
 
     public int getNumberPlaces() {
         return numberPlaces;
     }
 
-    public double getTotalPrice() {
-        return totalPrice;
-    }
 
     public void setNumberPlaces(int numberPlaces) {
         this.numberPlaces = numberPlaces;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Room room = (Room) o;
+        return roomNumber == room.roomNumber;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(roomNumber);
     }
 }
