@@ -1,6 +1,6 @@
 package proiectfinal;
 
-public class Services {
+public class Service {
 
     private String servicesName;
     private double servicePrice;
