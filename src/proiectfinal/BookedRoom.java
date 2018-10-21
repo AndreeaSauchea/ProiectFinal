@@ -1,7 +1,6 @@
 package proiectfinal;
 
 import java.util.List;
-import java.util.Objects;
 
 public class BookedRoom {
 
@@ -24,7 +23,7 @@ public class BookedRoom {
         this.services = services;
     }
 
-    public void calculateTotalPrice (){
+    private void calculateTotalPrice (){
         this.totalPrice = room.getNightlyPrice() * client.getDuration();
     }
 

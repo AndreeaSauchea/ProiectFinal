@@ -28,6 +28,8 @@ public class Hotel {
 
         SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
 
+
+
         try {
             Client client1 = new Client(dateformat.parse("17/07/1989"), dateformat.parse("20/07/1989"), "Pop", "Ion",  "123456789123456");
             Client client2 = new Client(dateformat.parse("17/10/1989"), dateformat.parse("20/10/1989"), "Pope", "Ina",  "123456789483456");
@@ -41,7 +43,7 @@ public class Hotel {
             System.out.println("Ceva nu e ok la date");
         }
 
-        BookedRoom bookedRoom1 = new BookedRoom(clients.get(0), room1);
+        BookedRoom bookedRoom1 = new BookedRoom(clients.get(1), room1);
         BookedRoom bookedRoom2 = new BookedRoom(clients.get(1), room2);
         BookedRoom bookedRoom3 = new BookedRoom(clients.get(2), room3);
         BookedRoom bookedRoom4 = new BookedRoom(clients.get(3), room4);

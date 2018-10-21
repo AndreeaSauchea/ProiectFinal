@@ -10,8 +10,8 @@ public class Client extends Human {
     private Date checkOut;
 
 
-    public Client(Date checkIn, Date checkOut, String name, String vorname, String cnp){
-        super(name, vorname, cnp);
+    public Client(Date checkIn, Date checkOut, String name, String forename, String cnp){
+        super(name, forename, cnp);
         this.checkIn = checkIn;
         this.checkOut = checkOut;
         calculateDuration();

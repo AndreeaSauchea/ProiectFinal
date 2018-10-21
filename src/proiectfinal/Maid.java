@@ -7,8 +7,8 @@ public class Maid extends Human {
 
     private List<Room> rooms;
 
-    public Maid(String name, String vorname, String cnp, Set<Room> rooms){
-        super(name, vorname, cnp);
+    public Maid(String name, String forename, String cnp, Set<Room> rooms){
+        super(name, forename, cnp);
         this.getRooms();
     }
 

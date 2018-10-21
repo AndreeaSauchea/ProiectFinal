@@ -5,7 +5,7 @@ import java.util.Date;
 public class Human {
 
     private String name;
-    private String vorname;
+    private String forename;
     private String cnp;
     private String street;
     private int streetNumber;
@@ -15,9 +15,9 @@ public class Human {
     private int numberID;
 
 
-    public Human(String name, String vorname, String cnp){
+    public Human(String name, String forename, String cnp){
         this.name = name;
-        this.vorname = vorname;
+        this.forename = forename;
         this.cnp = cnp;
 
     }
@@ -30,12 +30,12 @@ public class Human {
         this.name = name;
     }
 
-    public String getVorname() {
-        return vorname;
+    public String getForename() {
+        return forename;
     }
 
-    public void setVorname(String vorname) {
-        this.vorname = vorname;
+    public void setForename(String forename) {
+        this.forename = forename;
     }
 
     public String getCnp() {
