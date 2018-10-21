@@ -43,7 +43,7 @@ public class Hotel {
             System.out.println("Ceva nu e ok la date");
         }
 
-        BookedRoom bookedRoom1 = new BookedRoom(clients.get(1), room1);
+        BookedRoom bookedRoom1 = new BookedRoom(clients.get(0), room1);
         BookedRoom bookedRoom2 = new BookedRoom(clients.get(1), room2);
         BookedRoom bookedRoom3 = new BookedRoom(clients.get(2), room3);
         BookedRoom bookedRoom4 = new BookedRoom(clients.get(3), room4);
