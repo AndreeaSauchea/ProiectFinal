@@ -5,18 +5,17 @@ import java.util.Set;
 
 public class Maid extends Human {
 
-    private List<Room> rooms;
+    private Set<Room> rooms;
 
-    public Maid(String name, String forename, String cnp, Set<Room> rooms){
+    public Maid(String name, String forename, String cnp){
         super(name, forename, cnp);
-        this.getRooms();
     }
 
-    public List<Room> getRooms() {
+    public Set<Room> getRooms() {
         return rooms;
     }
 
-    public void setRooms(List<Room> rooms) {
+    public void setRooms(Set<Room> rooms) {
         this.rooms = rooms;
     }
 

@@ -13,7 +13,6 @@ public class Hotel {
         List<Client> clients = new ArrayList<>();
         List<Maid> maids = new ArrayList<>();
         Set<Room> rooms = new HashSet<>();
-        Set<BookedRoom> bookedRooms = new HashSet<>();
         List<Service> services = new ArrayList<>();
 
 
@@ -32,9 +31,9 @@ public class Hotel {
 
         try {
             Client client1 = new Client(dateformat.parse("17/07/1989"), dateformat.parse("20/07/1989"), "Pop", "Ion",  "123456789123456");
-            Client client2 = new Client(dateformat.parse("17/10/1989"), dateformat.parse("20/10/1989"), "Pope", "Ina",  "123456789483456");
-            Client client3 = new Client(dateformat.parse("17/11/1989"), dateformat.parse("20/11/1989"), "Popa", "Ana",  "123456789543456");
-            Client client4 = new Client(dateformat.parse("17/12/1989"), dateformat.parse("20/12/1989"), "Pip", "Maria",  "123456781223456");
+            Client client2 = new Client(dateformat.parse("16/10/1989"), dateformat.parse("20/10/1989"), "Pope", "Ina",  "123456789483456");
+            Client client3 = new Client(dateformat.parse("18/11/1989"), dateformat.parse("20/11/1989"), "Popa", "Ana",  "123456789543456");
+            Client client4 = new Client(dateformat.parse("19/12/1989"), dateformat.parse("20/12/1989"), "Pip", "Maria",  "123456781223456");
             clients.add(client1);
             clients.add(client2);
             clients.add(client3);
@@ -43,28 +42,51 @@ public class Hotel {
             System.out.println("Ceva nu e ok la date");
         }
 
-        BookedRoom bookedRoom1 = new BookedRoom(clients.get(0), room1);
-        BookedRoom bookedRoom2 = new BookedRoom(clients.get(1), room2);
-        BookedRoom bookedRoom3 = new BookedRoom(clients.get(2), room3);
-        BookedRoom bookedRoom4 = new BookedRoom(clients.get(3), room4);
-        bookedRooms.add(bookedRoom1);
-        bookedRooms.add(bookedRoom2);
-        bookedRooms.add(bookedRoom3);
-        bookedRooms.add(bookedRoom4);
+        BookedRoom bookedRoom1 = new BookedRoom();
+        BookedRoom bookedRoom2 = new BookedRoom();
+        BookedRoom bookedRoom3 = new BookedRoom();
+        BookedRoom bookedRoom4 = new BookedRoom();
 
-        Maid maid1 = new Maid("Pop", "Irina", "28746541352123", rooms);
-        Maid maid2 = new Maid("Popa", "Elena", "28749547352123", rooms);
+        try{
+            bookedRoom1 = History.bookRoom(clients.get(0), room1);
+            bookedRoom2 = History.bookRoom(clients.get(1), room2);
+            bookedRoom3 = History.bookRoom(clients.get(2), room3);
+            bookedRoom4 = History.bookRoom(clients.get(3), room4);
+        }catch (RoomAlreadyBooked rab){
+            System.out.println("You are trying to book a room that is already booked.");
+        }
+
+
+
+        Maid maid1 = new Maid("Pop", "Irina", "28746541352123");
+        Maid maid2 = new Maid("Popa", "Elena", "28749547352123");
         maids.add(maid1);
         maids.add(maid2);
 
-        Service breackfast = new Service();
-        Service dinner = new Service();
+        maid1.setRooms(rooms);
+
+        for (Maid m : maids){
+            m.clean();
+        }
+
+
+        Service breackfast = new Service("breackfast", 150);
+        Service dinner = new Service("dinner", 150);
         services.add(breackfast);
         services.add(dinner);
 
+        bookedRoom1.setServices(services);
+
         Factura factura1 = new Factura(bookedRoom1);
+        Factura factura2 = new Factura(bookedRoom2);
+        Factura factura3 = new Factura(bookedRoom3);
+        Factura factura4 = new Factura(bookedRoom4);
+
 
         System.out.println("Trebuie sa platiti: " + factura1.generateFactura());
+        System.out.println("Trebuie sa platiti: " + factura2.generateFactura());
+        System.out.println("Trebuie sa platiti: " + factura3.generateFactura());
+        System.out.println("Trebuie sa platiti: " + factura4.generateFactura());
 
 
     }

@@ -1,5 +1,6 @@
 package proiectfinal;
 
+import java.util.List;
 import java.util.Objects;
 
 public class Room {
@@ -11,6 +12,15 @@ public class Room {
     public Room (int roomNumber, double nightlyPrice){
         this.roomNumber = roomNumber;
         this.nightlyPrice = nightlyPrice;
+    }
+
+    public boolean notBooked(Room room, List<Room> booked){
+        for (Room room1 : booked){
+            if(room.equals(room1)){
+                return false;
+            }
+        }
+        return true;
     }
 
     public int getRoomNumber() {
