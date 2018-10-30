@@ -1,13 +1,29 @@
 package proiectfinal.model;
 
+import javax.persistence.*;
 import java.util.Date;
 
+@Entity
+@Table(name = "clients")
 public class Client {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     private long duration;
     private Date checkIn;
     private Date checkOut;
     private String name;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     private String forename;
     private String cnp;
     private String street;

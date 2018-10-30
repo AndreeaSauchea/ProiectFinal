@@ -1,13 +1,29 @@
 package proiectfinal.model;
 
+import javax.persistence.*;
 import java.util.List;
 
+@Entity
+@Table(name = "bookedRooms")
  public class BookedRoom {
 
-    private double totalPrice;
+     @Id
+     @GeneratedValue(strategy = GenerationType.AUTO)
+     private Long id;
+
+     private double totalPrice;
     private Client client;
     private Room room;
     private List<Service> services;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     private double totalServicePrices;
 
    public BookedRoom() {
@@ -19,7 +35,23 @@ import java.util.List;
         calculateTotalPrice();
     }
 
-    public List<Service> getServices() {
+     public Client getClient() {
+         return client;
+     }
+
+     public void setClient(Client client) {
+         this.client = client;
+     }
+
+     public Room getRoom() {
+         return room;
+     }
+
+     public void setRoom(Room room) {
+         this.room = room;
+     }
+
+     public List<Service> getServices() {
         return services;
     }
 
