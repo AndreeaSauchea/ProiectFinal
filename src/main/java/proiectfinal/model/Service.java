@@ -6,6 +6,10 @@ public class Service {
     private double servicePrice;
     private int serviceDuration;
 
+    public Service(){
+
+    }
+
     public Service(String servicesName, double servicePrice) {
         this.servicesName = servicesName;
         this.servicePrice = servicePrice;

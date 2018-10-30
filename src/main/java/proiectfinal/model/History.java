@@ -8,6 +8,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/*
+    Clasa asta va fi stearsa pentru ca va fi inlocuita de getAll pe BookedRook;
+    Tabelul BookedRoom va functiona ca istorie;
+    Am lasat-o ca sa nu uit de EXCEPTIE;
+ */
+
+
+
 public class History {
 
     Map<BookedRoom, ArrayList<Client>> bookHistory = new HashMap<>();

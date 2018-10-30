@@ -2,7 +2,7 @@ package proiectfinal.model;
 
 import java.util.List;
 
-public class BookedRoom {
+ public class BookedRoom {
 
     private double totalPrice;
     private Client client;
@@ -10,7 +10,7 @@ public class BookedRoom {
     private List<Service> services;
     private double totalServicePrices;
 
-    public BookedRoom() {
+   public BookedRoom() {
     }
 
     public BookedRoom (Client client, Room room) {
@@ -23,7 +23,7 @@ public class BookedRoom {
         return services;
     }
 
-    public void setServices(List<Service> services) {
+     void setServices(List<Service> services) {
         this.services = services;
     }
 

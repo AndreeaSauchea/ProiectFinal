@@ -13,7 +13,6 @@ public class Hotel {
     public static void main(String[] args) {
 
         List<Client> clients = new ArrayList<>();
-        List<Maid> maids = new ArrayList<>();
         Set<Room> rooms = new HashSet<>();
         List<Service> services = new ArrayList<>();
 
@@ -56,19 +55,6 @@ public class Hotel {
             bookedRoom4 = History.bookRoom(clients.get(3), room4);
         }catch (RoomAlreadyBooked rab){
             System.out.println("You are trying to book a room that is already booked.");
-        }
-
-
-
-        Maid maid1 = new Maid("Pop", "Irina", "28746541352123");
-        Maid maid2 = new Maid("Popa", "Elena", "28749547352123");
-        maids.add(maid1);
-        maids.add(maid2);
-
-        maid1.setRooms(rooms);
-
-        for (Maid m : maids){
-            m.clean();
         }
 
 

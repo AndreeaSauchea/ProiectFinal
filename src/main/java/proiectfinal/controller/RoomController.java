@@ -1,11 +1,10 @@
 package proiectfinal.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import proiectfinal.exception.RoomNotFoundException;
 import proiectfinal.model.Room;
-import proiectfinal.service.IRoomService;
+import proiectfinal.service.RoomService;
 
 import java.util.List;
 
@@ -13,13 +12,36 @@ import java.util.List;
 public class RoomController {
 
     @Autowired
-    IRoomService roomService;
+    private RoomService roomService;
 
-    @RequestMapping(method = RequestMethod.GET, value = {"/showRooms"})
+    @GetMapping("/rooms")
     public List<Room> findRooms() {
 
-        List<Room> rooms = (List<Room>) roomService.findAll();
+        return roomService.findAll();
 
-        return rooms;
     }
+
+    @PostMapping("/rooms")
+    public Room saveRoom(@RequestBody Room newRoom) {
+        return roomService.save(newRoom);
+    }
+
+    @GetMapping("/rooms/{id}")
+    public Room getRoomById(@PathVariable Long id) {
+
+        return roomService.findById(id).orElseThrow(RoomNotFoundException::new);
+    }
+
+    @PutMapping("/rooms/{id}")
+    Room updateRoom(@RequestBody Room newRoom, @PathVariable Long id) {
+
+        return roomService.updateRoom(id, newRoom);
+    }
+
+    @DeleteMapping("/rooms/{id}")
+    void deleteRoom(@PathVariable Long id) {
+        roomService.deleteById(id);
+    }
+
+
 }
