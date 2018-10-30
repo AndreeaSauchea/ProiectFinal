@@ -1,4 +1,4 @@
-package proiectfinal;
+package proiectfinal.model;
 
 public class Service {
 

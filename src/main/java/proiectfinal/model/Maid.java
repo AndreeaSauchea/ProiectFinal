@@ -1,6 +1,5 @@
-package proiectfinal;
+package proiectfinal.model;
 
-import java.util.List;
 import java.util.Set;
 
 public class Maid extends Human {

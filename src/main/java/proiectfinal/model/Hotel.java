@@ -1,4 +1,6 @@
-package proiectfinal;
+package proiectfinal.model;
+
+import proiectfinal.exception.RoomAlreadyBooked;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

@@ -1,5 +1,7 @@
-package proiectfinal;
+package proiectfinal.model;
 
+
+import proiectfinal.exception.RoomAlreadyBooked;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +14,7 @@ public class History {
     static List<Room> bookedNow = new ArrayList<>();
 
 
-    public static BookedRoom bookRoom(Client client, Room room) throws RoomAlreadyBooked{
+    public static BookedRoom bookRoom(Client client, Room room) throws RoomAlreadyBooked {
         if(room.notBooked(room, bookedNow)) {
             BookedRoom bookedRoom = new BookedRoom(client, room);
             bookedNow.add(room);

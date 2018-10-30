@@ -1,11 +1,9 @@
-package proiectfinal;
+package proiectfinal.model;
 
-import java.util.List;
 
 public class Factura {
 
     private BookedRoom room;
-    private double totalServicePrices;
     private double total;
 
     public Factura(BookedRoom room){

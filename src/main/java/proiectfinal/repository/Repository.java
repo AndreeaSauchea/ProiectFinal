@@ -1,4 +1,4 @@
-package proiectfinal;
+package proiectfinal.repository;
 
 public class Repository {
 

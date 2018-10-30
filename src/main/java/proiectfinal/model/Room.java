@@ -1,13 +1,30 @@
-package proiectfinal;
+package proiectfinal.model;
 
-import java.util.List;
+
+
 import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.util.List;
 
+
+@Entity
+@Table(name = "rooms")
 public class Room {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     private int roomNumber;
     private double nightlyPrice;
     private int numberPlaces;
+
+    public Room(){}
+
 
     public Room (int roomNumber, double nightlyPrice){
         this.roomNumber = roomNumber;

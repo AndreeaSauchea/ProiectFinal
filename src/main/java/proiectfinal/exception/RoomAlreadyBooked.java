@@ -1,4 +1,4 @@
-package proiectfinal;
+package proiectfinal.exception;
 
 public class RoomAlreadyBooked extends RuntimeException {
 }
