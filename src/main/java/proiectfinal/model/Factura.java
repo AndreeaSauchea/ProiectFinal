@@ -12,7 +12,7 @@ public class Factura {
 
 
     public double generateFactura() {
-       this.total = room.calculateTotalSevicePrices();
+       this.total = room.getTotalServicePrices();
        this.total += room.getTotalPrice();
        return this.total;
 

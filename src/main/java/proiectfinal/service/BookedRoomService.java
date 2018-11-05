@@ -25,6 +25,8 @@ public class BookedRoomService {
     }
 
     public BookedRoom save(BookedRoom bookedRoom) {
+        bookedRoom.calculateTotalPrice();
+        bookedRoom.calculateTotalSevicePrices();
         return bookedRoomRepository.save(bookedRoom);
     }
 

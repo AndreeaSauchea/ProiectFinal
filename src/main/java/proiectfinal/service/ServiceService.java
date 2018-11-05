@@ -37,7 +37,7 @@ public class ServiceService {
             Service room = optionalService.get();
             room.setServiceDuration(newService.getServiceDuration());
             room.setServicePrice(newService.getServicePrice());
-            room.setServicesName(newService.getServicesName());
+            room.setServiceName(newService.getServiceName());
             return serviceReopository.save(room);
         } else {
             throw new ServiceNotFoundException();

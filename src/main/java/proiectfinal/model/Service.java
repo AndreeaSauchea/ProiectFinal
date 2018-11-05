@@ -1,6 +1,7 @@
 package proiectfinal.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "services")
@@ -10,7 +11,15 @@ public class Service {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String servicesName;
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            },
+            mappedBy = "services")
+    private List<BookedRoom> bookedRooms;
+
+    private String serviceName;
     private double servicePrice;
     private int serviceDuration;
 
@@ -26,17 +35,17 @@ public class Service {
         this.id = id;
     }
 
-    public Service(String servicesName, double servicePrice) {
-        this.servicesName = servicesName;
+    public Service(String serviceName, double servicePrice) {
+        this.serviceName = serviceName;
         this.servicePrice = servicePrice;
     }
 
-    public String getServicesName() {
-        return servicesName;
+    public String getServiceName() {
+        return serviceName;
     }
 
-    public void setServicesName(String servicesName) {
-        this.servicesName = servicesName;
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
     }
 
     public double getServicePrice() {

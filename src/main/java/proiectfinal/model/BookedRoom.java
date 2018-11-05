@@ -4,17 +4,32 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "bookedRooms")
+@Table(name = "bookedrooms")
  public class BookedRoom {
 
      @Id
      @GeneratedValue(strategy = GenerationType.AUTO)
      private Long id;
 
-     private double totalPrice;
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "client_id", nullable = false)
     private Client client;
+
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "room_id", nullable = false)
     private Room room;
+
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            })
+    @JoinTable(name = "bookedrooms_services",
+            joinColumns = { @JoinColumn(name = "bookedroom_id") },
+            inverseJoinColumns = { @JoinColumn(name = "service_id") })
     private List<Service> services;
+
+    private double totalPrice;
 
     public Long getId() {
         return id;
@@ -32,7 +47,6 @@ import java.util.List;
     public BookedRoom (Client client, Room room) {
         this.client = client;
         this.room = room;
-        calculateTotalPrice();
     }
 
      public Client getClient() {
@@ -59,12 +73,20 @@ import java.util.List;
         this.services = services;
     }
 
-    private void calculateTotalPrice (){
+    public void calculateTotalPrice (){
         this.totalPrice = room.getNightlyPrice() * client.getDuration();
     }
 
     public double getTotalPrice() {
         return totalPrice;
+    }
+
+    public double getTotalServicePrices() {
+        return totalServicePrices;
+    }
+
+    public void setTotalServicePrices(double totalServicePrices) {
+        this.totalServicePrices = totalServicePrices;
     }
 
     public double calculateTotalSevicePrices(){

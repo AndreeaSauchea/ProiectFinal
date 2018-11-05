@@ -24,15 +24,24 @@ public class Client {
         this.id = id;
     }
 
+    @OneToOne(fetch = FetchType.LAZY,
+            cascade =  CascadeType.ALL,
+            mappedBy = "client")
+    private BookedRoom bookedRoom;
+
     private String forename;
     private String cnp;
     private String street;
     private int streetNumber;
     private Date birthday;
+    @Column(name = "type_id")
     private String typeID;
+    @Column(name = "series_id")
     private String seriesID;
-    private int numberID;
+    @Column(name = "number_id")
+    private String numberID;
 
+    public Client(){}
 
     public Client(Date checkIn, Date checkOut, String name, String forename, String cnp){
         this.checkIn = checkIn;
@@ -40,7 +49,6 @@ public class Client {
         this.name = name;
         this.forename = forename;
         this.cnp = cnp;
-        calculateDuration();
     }
 
     public Date getCheckIn() {
@@ -111,11 +119,11 @@ public class Client {
         this.seriesID = seriesID;
     }
 
-    public int getNumberID() {
+    public String getNumberID() {
         return numberID;
     }
 
-    public void setNumberID(int numberID) {
+    public void setNumberID(String numberID) {
         this.numberID = numberID;
     }
 
@@ -131,7 +139,7 @@ public class Client {
         this.checkOut = checkOut;
     }
 
-    private void calculateDuration(){
+    public void calculateDuration(){
         this.duration = (this.checkOut.getTime() - this.checkIn.getTime())/(24*60*60*1000);
     }
 

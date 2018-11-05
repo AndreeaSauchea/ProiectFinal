@@ -21,6 +21,7 @@ public class ClientService {
     }
 
     public Client save(Client client) {
+        client.calculateDuration();
         return clientRepository.save(client);
     }
 
