@@ -2,8 +2,9 @@ package proiectfinal.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import proiectfinal.controller.dto.ClientRequest;
+import proiectfinal.controller.dto.ClientResponse;
 import proiectfinal.exception.ClientNotFoundException;
-import proiectfinal.model.Client;
 import proiectfinal.service.ClientService;
 
 import java.util.List;
@@ -14,27 +15,23 @@ public class ClientController {
     private ClientService clientService;
 
     @GetMapping("/clients")
-    public List<Client> findClients() {
-
+    public List<ClientResponse> findClients() {
         return clientService.findAll();
-
     }
 
     @PostMapping("/clients")
-    public Client saveClient(@RequestBody Client newClient) {
-        return clientService.save(newClient);
+    public ClientResponse saveClient(@RequestBody ClientRequest newClientRequest) {
+        return clientService.save(newClientRequest);
     }
 
     @GetMapping("/clients/{id}")
-    public Client getClientById(@PathVariable Long id) {
-
-        return clientService.findById(id).orElseThrow(ClientNotFoundException::new);
+    public ClientResponse getClientById(@PathVariable Long id) throws ClientNotFoundException {
+        return clientService.findById(id);
     }
 
     @PutMapping("/clients/{id}")
-    Client updateClient(@RequestBody Client newClient, @PathVariable Long id) {
-
-        return clientService.updateClient(id, newClient);
+    ClientResponse updateClient(@RequestBody ClientRequest newClientRequest, @PathVariable Long id) throws ClientNotFoundException {
+        return clientService.updateClient(id, newClientRequest);
     }
 
     @DeleteMapping("/clients/{id}")

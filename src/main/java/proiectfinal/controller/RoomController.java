@@ -2,6 +2,8 @@ package proiectfinal.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import proiectfinal.controller.dto.RoomRequest;
+import proiectfinal.controller.dto.RoomResponse;
 import proiectfinal.exception.RoomNotFoundException;
 import proiectfinal.model.Room;
 import proiectfinal.service.RoomService;
@@ -15,27 +17,23 @@ public class RoomController {
     private RoomService roomService;
 
     @GetMapping("/rooms")
-    public List<Room> findRooms() {
-
+    public List<RoomResponse> findRooms() {
         return roomService.findAll();
-
     }
 
     @PostMapping("/rooms")
-    public Room saveRoom(@RequestBody Room newRoom) {
-        return roomService.save(newRoom);
+    public RoomResponse saveRoom(@RequestBody RoomRequest newRoomRequest) {
+        return roomService.save(newRoomRequest);
     }
 
     @GetMapping("/rooms/{id}")
-    public Room getRoomById(@PathVariable Long id) {
-
-        return roomService.findById(id).orElseThrow(RoomNotFoundException::new);
+    public RoomResponse getRoomById(@PathVariable Long id) throws RoomNotFoundException {
+        return roomService.findById(id);
     }
 
     @PutMapping("/rooms/{id}")
-    Room updateRoom(@RequestBody Room newRoom, @PathVariable Long id) {
-
-        return roomService.updateRoom(id, newRoom);
+    RoomResponse updateRoom(@RequestBody RoomRequest newRoomRequest, @PathVariable Long id) throws RoomNotFoundException {
+        return roomService.updateRoom(id, newRoomRequest);
     }
 
     @DeleteMapping("/rooms/{id}")

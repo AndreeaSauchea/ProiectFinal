@@ -65,3 +65,9 @@ CREATE TABLE bookedrooms_services
 
 ALTER TABLE bookedrooms ADD total_service_prices double precision;
 ALTER TABLE clients ADD duration bigint;
+ALTER TABLE bookedrooms DROP COLUMN total_price;
+ALTER TABLE bookedrooms DROP COLUMN total_service_prices;
+ALTER TABLE clients DROP COLUMN check_in;
+ALTER TABLE clients DROP COLUMN check_out;
+ALTER TABLE bookedrooms ADD check_in timestamp;
+ALTER TABLE bookedrooms ADD check_out timestamp;

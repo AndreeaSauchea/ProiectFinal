@@ -2,6 +2,8 @@ package proiectfinal.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import proiectfinal.controller.dto.ServiceRequest;
+import proiectfinal.controller.dto.ServiceResponse;
 import proiectfinal.exception.ServiceNotFoundException;
 import proiectfinal.model.Service;
 import proiectfinal.service.ServiceService;
@@ -14,27 +16,23 @@ public class ServiceController {
     private ServiceService serviceService;
 
     @GetMapping("/services")
-    public List<Service> findServices() {
-
+    public List<ServiceResponse> findServices() {
         return serviceService.findAll();
-
     }
 
     @PostMapping("/services")
-    public Service saveService(@RequestBody Service newService) {
-        return serviceService.save(newService);
+    public ServiceResponse saveService(@RequestBody ServiceRequest newServiceRequest) {
+        return serviceService.save(newServiceRequest);
     }
 
     @GetMapping("/services/{id}")
-    public Service getServeceById(@PathVariable Long id) {
-
-        return serviceService.findById(id).orElseThrow(ServiceNotFoundException::new);
+    public ServiceResponse getServeceById(@PathVariable Long id) throws ServiceNotFoundException {
+        return serviceService.findById(id);
     }
 
     @PutMapping("/services/{id}")
-    Service updateService(@RequestBody Service newService, @PathVariable Long id) {
-
-        return serviceService.updateService(id, newService);
+    ServiceResponse updateService(@RequestBody ServiceRequest newServiceRequest, @PathVariable Long id) throws ServiceNotFoundException {
+        return serviceService.updateService(id, newServiceRequest);
     }
 
     @DeleteMapping("/services/{id}")

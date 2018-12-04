@@ -15,10 +15,10 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY,
+    @OneToMany(fetch = FetchType.LAZY,
             cascade =  CascadeType.ALL,
             mappedBy = "room")
-    private BookedRoom bookedRoom;
+    private List<BookedRoom> bookedRooms;
 
     private int roomNumber;
     private double nightlyPrice;

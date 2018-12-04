@@ -27,18 +27,15 @@ public class Hotel {
 
 
 
-        try {
-            Client client1 = new Client(dateformat.parse("17/07/1989"), dateformat.parse("20/07/1989"), "Pop", "Ion",  "123456789123456");
-            Client client2 = new Client(dateformat.parse("16/10/1989"), dateformat.parse("20/10/1989"), "Pope", "Ina",  "123456789483456");
-            Client client3 = new Client(dateformat.parse("18/11/1989"), dateformat.parse("20/11/1989"), "Popa", "Ana",  "123456789543456");
-            Client client4 = new Client(dateformat.parse("19/12/1989"), dateformat.parse("20/12/1989"), "Pip", "Maria",  "123456781223456");
+            Client client1 = new Client( "Pop", "Ion",  "123456789123456");
+            Client client2 = new Client( "Pope", "Ina",  "123456789483456");
+            Client client3 = new Client( "Popa", "Ana",  "123456789543456");
+            Client client4 = new Client( "Pip", "Maria",  "123456781223456");
             clients.add(client1);
             clients.add(client2);
             clients.add(client3);
             clients.add(client4);
-        } catch (ParseException pe){
-            System.out.println("Ceva nu e ok la date");
-        }
+
 
         BookedRoom bookedRoom1 = new BookedRoom();
         BookedRoom bookedRoom2 = new BookedRoom();

@@ -1,68 +1,20 @@
-package proiectfinal.model;
+package proiectfinal.controller.dto;
 
-import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
-@Entity
-@Table(name = "clients")
-public class Client {
+public class ClientResponse {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
+    private long duration;
     private String name;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @OneToMany(fetch = FetchType.LAZY,
-            cascade =  CascadeType.ALL,
-            mappedBy = "client")
-    private List<BookedRoom> bookedRooms;
-
     private String forename;
     private String cnp;
     private String street;
     private int streetNumber;
     private Date birthday;
-    @Column(name = "type_id")
     private String typeID;
-    @Column(name = "series_id")
     private String seriesID;
-    @Column(name = "number_id")
     private String numberID;
 
-    public Client(){}
-
-    public Client(String name, String forename, String cnp){
-        this.name = name;
-        this.forename = forename;
-        this.cnp = cnp;
-    }
-
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getForename() {
-        return forename;
-    }
-
-    public void setForename(String forename) {
-        this.forename = forename;
-    }
 
     public String getCnp() {
         return cnp;
@@ -118,5 +70,21 @@ public class Client {
 
     public void setNumberID(String numberID) {
         this.numberID = numberID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getForename() {
+        return forename;
+    }
+
+    public void setForename(String forename) {
+        this.forename = forename;
     }
 }

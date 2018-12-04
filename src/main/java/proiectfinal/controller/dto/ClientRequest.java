@@ -1,52 +1,18 @@
-package proiectfinal.model;
+package proiectfinal.controller.dto;
 
-import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
-@Entity
-@Table(name = "clients")
-public class Client {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+public class ClientRequest {
 
     private String name;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @OneToMany(fetch = FetchType.LAZY,
-            cascade =  CascadeType.ALL,
-            mappedBy = "client")
-    private List<BookedRoom> bookedRooms;
-
     private String forename;
     private String cnp;
     private String street;
     private int streetNumber;
     private Date birthday;
-    @Column(name = "type_id")
     private String typeID;
-    @Column(name = "series_id")
     private String seriesID;
-    @Column(name = "number_id")
     private String numberID;
-
-    public Client(){}
-
-    public Client(String name, String forename, String cnp){
-        this.name = name;
-        this.forename = forename;
-        this.cnp = cnp;
-    }
-
 
     public String getName() {
         return name;

@@ -1,4 +1,4 @@
 package proiectfinal.exception;
 
-public class ServiceNotFoundException extends RuntimeException {
+public class ServiceNotFoundException extends Exception {
 }

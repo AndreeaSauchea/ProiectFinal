@@ -2,8 +2,11 @@ package proiectfinal.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import proiectfinal.controller.dto.BookedRoomRequest;
+import proiectfinal.controller.dto.BookedRoomResponse;
 import proiectfinal.exception.BookedRoomNotFoundException;
-import proiectfinal.model.BookedRoom;
+import proiectfinal.exception.ClientNotFoundException;
+import proiectfinal.exception.RoomNotFoundException;
 import proiectfinal.service.BookedRoomService;
 
 import java.util.List;
@@ -14,27 +17,23 @@ public class BookedRoomController {
     private BookedRoomService bookedRoomService;
 
     @GetMapping("/bookedrooms")
-    public List<BookedRoom> findBookedRooms() {
-
+    public List<BookedRoomResponse> findBookedRooms() {
         return bookedRoomService.findAll();
-
     }
 
     @PostMapping("/bookedrooms")
-    public BookedRoom saveBookedRoom(@RequestBody BookedRoom newBookedRoom) {
-        return bookedRoomService.save(newBookedRoom);
+    public BookedRoomResponse saveBookedRoom(@RequestBody BookedRoomRequest bookedRoomRequest) throws RoomNotFoundException, ClientNotFoundException {
+        return bookedRoomService.save(bookedRoomRequest);
     }
 
     @GetMapping("/bookedrooms/{id}")
-    public BookedRoom getBookedRoomById(@PathVariable Long id) {
-
-        return bookedRoomService.findById(id).orElseThrow(BookedRoomNotFoundException::new);
+    public BookedRoomResponse getBookedRoomById(@PathVariable Long id) throws BookedRoomNotFoundException {
+        return bookedRoomService.findById(id);
     }
 
     @PutMapping("/bookedrooms/{id}")
-    BookedRoom updateBookedRoom(@RequestBody BookedRoom newBookedRoom, @PathVariable Long id) {
-
-        return bookedRoomService.updateRoom(id, newBookedRoom);
+    BookedRoomResponse updateBookedRoom(@RequestBody BookedRoomRequest newRequest, @PathVariable Long id) throws BookedRoomNotFoundException, RoomNotFoundException {
+        return bookedRoomService.updateRoom(id, newRequest);
     }
 
     @DeleteMapping("/bookedrooms/{id}")
