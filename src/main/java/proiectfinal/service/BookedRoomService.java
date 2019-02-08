@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import proiectfinal.controller.dto.BookedRoomRequest;
 import proiectfinal.controller.dto.BookedRoomResponse;
+import proiectfinal.controller.dto.ClientHistoryResponse;
 import proiectfinal.exception.BookedRoomNotFoundException;
 import proiectfinal.exception.ClientNotFoundException;
 import proiectfinal.exception.RoomNotFoundException;
@@ -94,5 +95,20 @@ public class BookedRoomService {
         } else {
             throw new BookedRoomNotFoundException("Bookedroom not found");
         }
+    }
+
+    public List<ClientHistoryResponse> findHistoryClients() {
+        List<ClientHistoryResponse> response = new ArrayList<>();
+        List<BookedRoom> historyBookedRoom = bookedRoomRepository.findAll();
+        ClientHistoryResponse clientHistoryResponse = new ClientHistoryResponse();
+        for (BookedRoom bookedRoom : historyBookedRoom) {
+            clientHistoryResponse.setCheckIn(bookedRoom.getCheckIn());
+            clientHistoryResponse.setCheckOut(bookedRoom.getCheckOut());
+            clientHistoryResponse.setFirstName(bookedRoom.getClient().getFirstname());
+            clientHistoryResponse.setLastName(bookedRoom.getClient().getLastname());
+            clientHistoryResponse.setRoom(bookedRoom.getRoom().getRoomNumber());
+            response.add(clientHistoryResponse);
+        }
+        return response;
     }
 }

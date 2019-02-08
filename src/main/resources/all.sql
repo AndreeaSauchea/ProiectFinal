@@ -71,3 +71,11 @@ ALTER TABLE clients DROP COLUMN check_in;
 ALTER TABLE clients DROP COLUMN check_out;
 ALTER TABLE bookedrooms ADD check_in timestamp;
 ALTER TABLE bookedrooms ADD check_out timestamp;
+ALTER TABLE clients RENAME COLUMN name TO lastname;
+ALTER TABLE clients RENAME COLUMN forename TO firstname;
+
+create sequence measures_measure_id_seq
+   owned by rooms.id;
+
+alter table rooms
+   alter column id set default nextval('measures_measure_id_seq');

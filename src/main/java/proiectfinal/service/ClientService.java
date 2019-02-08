@@ -18,8 +18,9 @@ public class ClientService {
     @Autowired
     private ClientRepository clientRepository;
 
+
     public List<ClientResponse> findAll() {
-        List<Client> clientList = (List<Client>) clientRepository.findAll();
+        List<Client> clientList = clientRepository.findAll();
         List<ClientResponse> clientResponseList = new ArrayList<>();
         for (Client addClient : clientList){
             clientResponseList.add(buildResponse(addClient));
@@ -30,8 +31,8 @@ public class ClientService {
 
     private ClientResponse buildResponse(Client client) {
         ClientResponse response = new ClientResponse();
-        response.setForename(client.getForename());
-        response.setName(client.getName());
+        response.setForename(client.getFirstname());
+        response.setName(client.getLastname());
         return response;
     }
 
@@ -80,8 +81,8 @@ public class ClientService {
     }
 
     public Client buildClient(Client client, ClientRequest clientRequest){
-        client.setName(clientRequest.getName());
-        client.setForename(clientRequest.getForename());
+        client.setLastname(clientRequest.getName());
+        client.setFirstname(clientRequest.getForename());
         client.setStreetNumber(clientRequest.getStreetNumber());
         client.setStreet(clientRequest.getStreet());
         client.setTypeID(clientRequest.getTypeID());

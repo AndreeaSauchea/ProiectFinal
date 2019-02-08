@@ -12,7 +12,7 @@ public class Client {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String name;
+    private String lastname;
 
     public Long getId() {
         return id;
@@ -27,7 +27,7 @@ public class Client {
             mappedBy = "client")
     private List<BookedRoom> bookedRooms;
 
-    private String forename;
+    private String firstname;
     private String cnp;
     private String street;
     private int streetNumber;
@@ -41,27 +41,27 @@ public class Client {
 
     public Client(){}
 
-    public Client(String name, String forename, String cnp){
-        this.name = name;
-        this.forename = forename;
+    public Client(String lastname, String firstname, String cnp){
+        this.lastname = lastname;
+        this.firstname = firstname;
         this.cnp = cnp;
     }
 
 
-    public String getName() {
-        return name;
+    public String getLastname() {
+        return lastname;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 
-    public String getForename() {
-        return forename;
+    public String getFirstname() {
+        return firstname;
     }
 
-    public void setForename(String forename) {
-        this.forename = forename;
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
     }
 
     public String getCnp() {

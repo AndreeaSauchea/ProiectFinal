@@ -1,10 +1,9 @@
 package proiectfinal.model;
 
 
-
-import java.util.Objects;
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 
 @Entity
@@ -16,7 +15,7 @@ public class Room {
     private Long id;
 
     @OneToMany(fetch = FetchType.LAZY,
-            cascade =  CascadeType.ALL,
+            cascade = CascadeType.ALL,
             mappedBy = "room")
     private List<BookedRoom> bookedRooms;
 
@@ -24,17 +23,18 @@ public class Room {
     private double nightlyPrice;
     private int numberPlaces;
 
-    public Room(){}
+    public Room() {
+    }
 
 
-    public Room (int roomNumber, double nightlyPrice){
+    public Room(int roomNumber, double nightlyPrice) {
         this.roomNumber = roomNumber;
         this.nightlyPrice = nightlyPrice;
     }
 
-    public boolean notBooked(Room room, List<Room> booked){
-        for (Room room1 : booked){
-            if(room.equals(room1)){
+    public boolean notBooked(Room room, List<Room> booked) {
+        for (Room room1 : booked) {
+            if (room.equals(room1)) {
                 return false;
             }
         }

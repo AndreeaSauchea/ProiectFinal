@@ -21,7 +21,7 @@ public class RoomService {
     private RoomRepository roomRepository;
 
     public List<RoomResponse> findAll() {
-        List<Room> rooms = (List<Room>) roomRepository.findAll();
+        List<Room> rooms = roomRepository.findAll();
         List<RoomResponse> responseList = new ArrayList<>();
         for (Room addRoom : rooms){
             responseList.add(buildResponse(addRoom));

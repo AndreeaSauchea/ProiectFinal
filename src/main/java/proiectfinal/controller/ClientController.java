@@ -2,9 +2,11 @@ package proiectfinal.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import proiectfinal.controller.dto.ClientHistoryResponse;
 import proiectfinal.controller.dto.ClientRequest;
 import proiectfinal.controller.dto.ClientResponse;
 import proiectfinal.exception.ClientNotFoundException;
+import proiectfinal.model.History;
 import proiectfinal.service.ClientService;
 
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.List;
 public class ClientController {
     @Autowired
     private ClientService clientService;
+
 
     @GetMapping("/clients")
     public List<ClientResponse> findClients() {

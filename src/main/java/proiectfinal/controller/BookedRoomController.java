@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import proiectfinal.controller.dto.BookedRoomRequest;
 import proiectfinal.controller.dto.BookedRoomResponse;
+import proiectfinal.controller.dto.ClientHistoryResponse;
 import proiectfinal.exception.BookedRoomNotFoundException;
 import proiectfinal.exception.ClientNotFoundException;
 import proiectfinal.exception.RoomNotFoundException;
@@ -12,9 +13,15 @@ import proiectfinal.service.BookedRoomService;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 public class BookedRoomController {
     @Autowired
     private BookedRoomService bookedRoomService;
+
+    @GetMapping("/bookedrooms/history")
+    public List<ClientHistoryResponse> findHistoryClients(){
+        return bookedRoomService.findHistoryClients();
+    }
 
     @GetMapping("/bookedrooms")
     public List<BookedRoomResponse> findBookedRooms() {
