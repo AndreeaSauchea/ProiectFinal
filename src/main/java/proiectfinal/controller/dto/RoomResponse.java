@@ -2,9 +2,18 @@ package proiectfinal.controller.dto;
 
 public class RoomResponse {
 
+    private Long id;
     private int roomNumber;
     private double nightlyPrice;
     private int numberPlaces;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public int getRoomNumber() {
         return roomNumber;

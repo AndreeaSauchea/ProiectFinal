@@ -2,16 +2,20 @@ package proiectfinal.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import proiectfinal.controller.dto.BookedRoomRequest;
-import proiectfinal.controller.dto.BookedRoomResponse;
-import proiectfinal.controller.dto.ClientHistoryResponse;
+import proiectfinal.controller.dto.*;
 import proiectfinal.exception.BookedRoomNotFoundException;
 import proiectfinal.exception.ClientNotFoundException;
 import proiectfinal.exception.RoomNotFoundException;
+import proiectfinal.exception.ServiceNotFoundException;
 import proiectfinal.model.BookedRoom;
+import proiectfinal.model.Room;
+import proiectfinal.model.Service;
 import proiectfinal.repository.BookedRoomRepository;
+import proiectfinal.repository.RoomRepository;
+import proiectfinal.repository.ServiceReopository;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +28,12 @@ public class BookedRoomService {
     private ClientService clientService;
     @Autowired
     private RoomService roomService;
+    @Autowired
+    private RoomRepository roomRepository;
+    @Autowired
+    private ServiceService serviceService;
+    @Autowired
+    private ServiceReopository serviceReopository;
 
     public List<BookedRoomResponse> findAll() {
         List<BookedRoom> bookedRoomList = (List<BookedRoom>) bookedRoomRepository.findAll();
@@ -85,7 +95,6 @@ public class BookedRoomService {
         bookedRoom.setCheckIn(newRequest.getCheckIn());
         BookedRoom saveBookedRoom = bookedRoomRepository.save(bookedRoom);
         return buildResponse(saveBookedRoom);
-
     }
 
     private BookedRoom findBookedRoom (Long bookedRoomId) throws BookedRoomNotFoundException {
@@ -110,5 +119,37 @@ public class BookedRoomService {
             response.add(clientHistoryResponse);
         }
         return response;
+    }
+
+    public BookedRoomResponse findBookedRoomByRoom(Long roomId) throws BookedRoomNotFoundException {
+        BookedRoomResponse response = new BookedRoomResponse();
+        Room room = roomRepository.findById(roomId).get();
+        Date now = new Date();
+        BookedRoom bookedRoom = bookedRoomRepository.findFirstByRoomAndCheckOutAfterOrderByCheckOutDesc(room,now);
+        if (bookedRoom != null){
+            response.setClient(bookedRoom.getClient().getFirstname() + " " + bookedRoom.getClient().getLastname());
+            response.setDuration(bookedRoom.getDuration());
+            response.setServiceList(serviceService.buildListResponse(bookedRoom.getServices()));
+            return response;
+        } else {
+            throw new BookedRoomNotFoundException("This room is not booked");
+        }
+
+    }
+
+    public void addBookedRoomActivity(Long roomId,Long activityId){
+        Room room = roomRepository.findById(roomId).get();
+        BookedRoom bookedRoom = bookedRoomRepository.findByRoom(room);
+        Service service = serviceReopository.findById(activityId).get();
+        bookedRoom.addService(service);
+        bookedRoomRepository.save(bookedRoom);
+    }
+
+    public void removeBookedRoomActivity(Long roomId, Long activityId) {
+        Room room = roomRepository.findById(roomId).get();
+        BookedRoom bookedRoom = bookedRoomRepository.findByRoom(room);
+        Service service = serviceReopository.findById(activityId).get();
+        bookedRoom.removeService(service);
+        bookedRoomRepository.save(bookedRoom);
     }
 }

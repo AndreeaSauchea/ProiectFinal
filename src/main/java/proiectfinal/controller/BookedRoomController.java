@@ -18,6 +18,11 @@ public class BookedRoomController {
     @Autowired
     private BookedRoomService bookedRoomService;
 
+    @GetMapping("/bookedrooms/room/{roomId}")
+    public BookedRoomResponse findBookedRoomByRoom(@PathVariable Long roomId) throws BookedRoomNotFoundException {
+        return bookedRoomService.findBookedRoomByRoom(roomId);
+    }
+
     @GetMapping("/bookedrooms/history")
     public List<ClientHistoryResponse> findHistoryClients(){
         return bookedRoomService.findHistoryClients();
@@ -39,14 +44,23 @@ public class BookedRoomController {
     }
 
     @PutMapping("/bookedrooms/{id}")
-    BookedRoomResponse updateBookedRoom(@RequestBody BookedRoomRequest newRequest, @PathVariable Long id) throws BookedRoomNotFoundException, RoomNotFoundException {
+    public BookedRoomResponse updateBookedRoom(@RequestBody BookedRoomRequest newRequest, @PathVariable Long id) throws BookedRoomNotFoundException, RoomNotFoundException {
         return bookedRoomService.updateRoom(id, newRequest);
     }
 
     @DeleteMapping("/bookedrooms/{id}")
-    void deleteBookedRoom(@PathVariable Long id) {
+    public void deleteBookedRoom(@PathVariable Long id) {
         bookedRoomService.deleteById(id);
     }
 
+    @PutMapping("bookedroom/{roomId}/activity/{activityId}/add")
+    public void addBookedRoomActivity(@PathVariable Long roomId, @PathVariable Long activityId){
+        bookedRoomService.addBookedRoomActivity(roomId,activityId);
+    }
+
+    @PutMapping("bookedroom/{roomId}/activity/{activityId}/remove")
+    public void removeBookedRoomActivity(@PathVariable Long roomId, @PathVariable Long activityId){
+        bookedRoomService.removeBookedRoomActivity(roomId,activityId);
+    }
 
 }

@@ -26,12 +26,26 @@ public class ServiceService {
         return serviceResponseList;
     }
 
-    private ServiceResponse buildResponse(Service service) {
+    public ServiceResponse buildResponse(Service service) {
         ServiceResponse response = new ServiceResponse();
         response.setServiceDuration(service.getServiceDuration());
         response.setServiceName(service.getServiceName());
         response.setServicePrice(service.getServicePrice());
+        response.setId(service.getId());
         return response;
+    }
+
+    public List<ServiceResponse> buildListResponse(List<Service> serviceList) {
+        List<ServiceResponse> responseList = new ArrayList<>();
+        for (Service service : serviceList){
+            ServiceResponse response = new ServiceResponse();
+            response.setServiceDuration(service.getServiceDuration());
+            response.setServiceName(service.getServiceName());
+            response.setServicePrice(service.getServicePrice());
+            response.setId(service.getId());
+            responseList.add(response);
+        }
+        return responseList;
     }
 
     public ServiceResponse save(ServiceRequest serviceRequest) {

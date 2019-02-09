@@ -1,13 +1,22 @@
 package proiectfinal.controller.dto;
 
 import java.util.Date;
+import java.util.List;
 
 public class BookedRoomRequest {
     private Long clientId;
     private Long roomId;
     private Date checkIn;
     private Date checkOut;
+    private List<Long> servicesId;
 
+    public List<Long> getServicesId() {
+        return servicesId;
+    }
+
+    public void setServicesId(List<Long> servicesId) {
+        this.servicesId = servicesId;
+    }
 
     public Long getClientId() {
         return clientId;

@@ -2,12 +2,21 @@ package proiectfinal.controller.dto;
 
 public class ServiceResponse {
 
+    private Long id;
     private String serviceName;
     private double servicePrice;
     private int serviceDuration;
 
     public String getServiceName() {
         return serviceName;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setServiceName(String serviceName) {

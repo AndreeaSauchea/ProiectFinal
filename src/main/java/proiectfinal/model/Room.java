@@ -8,7 +8,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "rooms")
-public class Room {
+public class Room implements Comparable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -86,5 +86,11 @@ public class Room {
     @Override
     public int hashCode() {
         return Objects.hash(roomNumber);
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        int compareRoomNumber = ((Room) o).getRoomNumber();
+        return this.roomNumber - compareRoomNumber;
     }
 }

@@ -2,16 +2,15 @@ package proiectfinal.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import proiectfinal.controller.dto.BookedRoomResponse;
 import proiectfinal.controller.dto.RoomRequest;
 import proiectfinal.controller.dto.RoomResponse;
 import proiectfinal.exception.RoomNotFoundException;
 import proiectfinal.model.Room;
+import proiectfinal.repository.BookedRoomRepository;
+import proiectfinal.repository.ClientRepository;
 import proiectfinal.repository.RoomRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @Component
@@ -19,14 +18,18 @@ public class RoomService {
 
     @Autowired
     private RoomRepository roomRepository;
+    @Autowired
+    private BookedRoomRepository bookedRoomRepository;
+    @Autowired
+    private ClientRepository clientRepository;
 
     public List<RoomResponse> findAll() {
         List<Room> rooms = roomRepository.findAll();
+        Collections.sort(rooms);
         List<RoomResponse> responseList = new ArrayList<>();
         for (Room addRoom : rooms){
             responseList.add(buildResponse(addRoom));
         }
-
         return responseList;
     }
 
@@ -35,6 +38,7 @@ public class RoomService {
         response.setNightlyPrice(room.getNightlyPrice());
         response.setNumberPlaces(room.getNumberPlaces());
         response.setRoomNumber(room.getRoomNumber());
+        response.setId(room.getId());
         return response;
     }
 

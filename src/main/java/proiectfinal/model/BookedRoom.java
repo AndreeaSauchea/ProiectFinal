@@ -1,6 +1,7 @@
 package proiectfinal.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,10 +32,11 @@ public class BookedRoom {
     private List<Service> services;
 
     private Date checkIn;
+    @Column(name = "check_out")
     private Date checkOut;
 
-    public Long getDuration(){
-        return ((this.checkOut.getTime() - this.checkIn.getTime())/(24*60*60*1000));
+    public Long getDuration() {
+        return ((this.checkOut.getTime() - this.checkIn.getTime()) / (24 * 60 * 60 * 1000));
     }
 
     public Long getId() {
@@ -57,6 +59,10 @@ public class BookedRoom {
         return room;
     }
 
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+
     public Date getCheckIn() {
         return checkIn;
     }
@@ -73,16 +79,26 @@ public class BookedRoom {
         this.checkOut = checkOut;
     }
 
-    public void setRoom(Room room) {
-        this.room = room;
-    }
-
     public List<Service> getServices() {
         return services;
     }
 
-    void setServices(List<Service> services) {
+    public void setServices(List<Service> services) {
         this.services = services;
+    }
+
+    public void addService(Service service) {
+        if (this.services == null) {
+            this.services = new ArrayList<>();
+        }
+        this.services.add(service);
+    }
+
+    public void removeService(Service service) {
+        if (this.services == null) {
+            return;
+        }
+        this.services.remove(service);
     }
 
     public double getTotalPrice() {

@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import proiectfinal.controller.dto.RoomRequest;
 import proiectfinal.controller.dto.RoomResponse;
 import proiectfinal.exception.RoomNotFoundException;
-import proiectfinal.model.Room;
 import proiectfinal.service.RoomService;
 
 import java.util.List;
