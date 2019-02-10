@@ -23,6 +23,11 @@ public class BookedRoomController {
         return bookedRoomService.findBookedRoomByRoom(roomId);
     }
 
+    @GetMapping("/bookedrooms/client/{clientId}")
+    public BookedRoomResponse findBookedRoomByClient(@PathVariable Long clientId) throws BookedRoomNotFoundException {
+        return bookedRoomService.findBookedRoomByClient(clientId);
+    }
+
     @GetMapping("/bookedrooms/history")
     public List<ClientHistoryResponse> findHistoryClients(){
         return bookedRoomService.findHistoryClients();

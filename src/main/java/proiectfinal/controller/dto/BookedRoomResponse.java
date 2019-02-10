@@ -13,7 +13,15 @@ public class BookedRoomResponse {
     private double totalPrice;
     private Date checkIn;
     private Date checkOut;
+    private int room;
 
+    public int getRoom() {
+        return room;
+    }
+
+    public void setRoom(int room) {
+        this.room = room;
+    }
 
     public double getTotalPrice() {
         return totalPrice;

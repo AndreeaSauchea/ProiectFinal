@@ -1,20 +1,48 @@
 package proiectfinal.controller.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 public class ClientResponse {
 
+    private Long id;
     private long duration;
     private String name;
     private String forename;
     private String cnp;
     private String street;
     private int streetNumber;
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date birthday;
     private String typeID;
     private String seriesID;
     private String numberID;
+    private int room;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+
+    public int getRoom() {
+        return room;
+    }
+
+    public void setRoom(int room) {
+        this.room = room;
+    }
 
     public String getCnp() {
         return cnp;

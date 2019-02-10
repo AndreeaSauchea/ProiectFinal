@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import proiectfinal.controller.dto.ClientHistoryResponse;
 import proiectfinal.controller.dto.ClientRequest;
 import proiectfinal.controller.dto.ClientResponse;
+import proiectfinal.exception.BookedRoomNotFoundException;
 import proiectfinal.exception.ClientNotFoundException;
 import proiectfinal.model.History;
 import proiectfinal.service.ClientService;
@@ -12,6 +13,7 @@ import proiectfinal.service.ClientService;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 public class ClientController {
     @Autowired
     private ClientService clientService;
@@ -33,13 +35,19 @@ public class ClientController {
     }
 
     @PutMapping("/clients/{id}")
-    ClientResponse updateClient(@RequestBody ClientRequest newClientRequest, @PathVariable Long id) throws ClientNotFoundException {
+    public ClientResponse updateClient(@RequestBody ClientRequest newClientRequest, @PathVariable Long id) throws ClientNotFoundException {
         return clientService.updateClient(id, newClientRequest);
     }
 
     @DeleteMapping("/clients/{id}")
-    void deleteClient(@PathVariable Long id) {
+    public void deleteClient(@PathVariable Long id) {
         clientService.deleteById(id);
+    }
+
+    @CrossOrigin
+    @GetMapping("/clients/cnp/{cnp}")
+    public ClientResponse findByCnp(@PathVariable String cnp) throws BookedRoomNotFoundException {
+        return clientService.findByCnp(cnp);
     }
 
 

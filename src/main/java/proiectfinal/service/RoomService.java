@@ -18,10 +18,6 @@ public class RoomService {
 
     @Autowired
     private RoomRepository roomRepository;
-    @Autowired
-    private BookedRoomRepository bookedRoomRepository;
-    @Autowired
-    private ClientRepository clientRepository;
 
     public List<RoomResponse> findAll() {
         List<Room> rooms = roomRepository.findAll();

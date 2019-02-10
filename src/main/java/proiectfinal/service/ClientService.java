@@ -1,9 +1,11 @@
 package proiectfinal.service;
 
+import org.aspectj.apache.bcel.generic.InstructionConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import proiectfinal.controller.dto.ClientRequest;
 import proiectfinal.controller.dto.ClientResponse;
+import proiectfinal.exception.BookedRoomNotFoundException;
 import proiectfinal.exception.ClientNotFoundException;
 import proiectfinal.model.Client;
 import proiectfinal.repository.ClientRepository;
@@ -17,6 +19,8 @@ public class ClientService {
 
     @Autowired
     private ClientRepository clientRepository;
+    @Autowired
+    private BookedRoomService bookedRoomService;
 
 
     public List<ClientResponse> findAll() {
@@ -91,5 +95,20 @@ public class ClientService {
         client.setCnp(clientRequest.getCnp());
         client.setBirthday(clientRequest.getBirthday());
         return client;
+    }
+
+    public ClientResponse findByCnp(String cnp) throws BookedRoomNotFoundException {
+        ClientResponse response = new ClientResponse();
+        Client client = clientRepository.findByCnp(cnp);
+        response.setName(client.getLastname());
+        response.setForename(client.getFirstname());
+        response.setBirthday(client.getBirthday());
+        response.setCnp(cnp);
+        response.setTypeID(client.getTypeID());
+        response.setSeriesID(client.getSeriesID());
+        response.setNumberID(client.getNumberID());
+        response.setId(client.getId());
+        response.setRoom(bookedRoomService.findBookedRoomByClient(client.getId()).getRoom());
+        return response;
     }
 }

@@ -11,6 +11,7 @@ import proiectfinal.service.ServiceService;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 public class ServiceController {
     @Autowired
     private ServiceService serviceService;

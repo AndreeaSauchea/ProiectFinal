@@ -9,4 +9,6 @@ public interface ClientRepository extends CrudRepository<Client, Long> {
 
     @Override
     List<Client> findAll();
+
+    Client findByCnp(String cnp);
 }

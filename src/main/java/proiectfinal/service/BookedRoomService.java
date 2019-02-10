@@ -8,9 +8,11 @@ import proiectfinal.exception.ClientNotFoundException;
 import proiectfinal.exception.RoomNotFoundException;
 import proiectfinal.exception.ServiceNotFoundException;
 import proiectfinal.model.BookedRoom;
+import proiectfinal.model.Client;
 import proiectfinal.model.Room;
 import proiectfinal.model.Service;
 import proiectfinal.repository.BookedRoomRepository;
+import proiectfinal.repository.ClientRepository;
 import proiectfinal.repository.RoomRepository;
 import proiectfinal.repository.ServiceReopository;
 
@@ -34,6 +36,8 @@ public class BookedRoomService {
     private ServiceService serviceService;
     @Autowired
     private ServiceReopository serviceReopository;
+    @Autowired
+    private ClientRepository clientRepository;
 
     public List<BookedRoomResponse> findAll() {
         List<BookedRoom> bookedRoomList = (List<BookedRoom>) bookedRoomRepository.findAll();
@@ -135,6 +139,17 @@ public class BookedRoomService {
             throw new BookedRoomNotFoundException("This room is not booked");
         }
 
+    }
+
+    public BookedRoomResponse findBookedRoomByClient(Long clientId) throws BookedRoomNotFoundException {
+        BookedRoomResponse response = new BookedRoomResponse();
+        Client client = clientRepository.findById(clientId).get();
+        Date now = new Date();
+        BookedRoom bookedRoom = bookedRoomRepository.findFirstByClientAndCheckOutAfterOrderByCheckOutDesc(client, now);
+        if (bookedRoom != null){
+            response.setRoom(bookedRoom.getRoom().getRoomNumber());
+        }
+        return response;
     }
 
     public void addBookedRoomActivity(Long roomId,Long activityId){
