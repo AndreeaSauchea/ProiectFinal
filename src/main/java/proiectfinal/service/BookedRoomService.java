@@ -59,7 +59,6 @@ public class BookedRoomService {
     private BookedRoomResponse buildResponse(BookedRoom saveBookedRoom) {
         BookedRoomResponse response = new BookedRoomResponse();
         response.setTotalPrice(saveBookedRoom.getTotalPrice());
-        response.setTotalServicePrice(saveBookedRoom.getTotalServicePrices());
         response.setCheckIn(saveBookedRoom.getCheckIn());
         response.setCheckOut(saveBookedRoom.getCheckOut());
         return response;
@@ -130,6 +129,7 @@ public class BookedRoomService {
             response.setClient(bookedRoom.getClient().getFirstname() + " " + bookedRoom.getClient().getLastname());
             response.setDuration(bookedRoom.getDuration());
             response.setServiceList(serviceService.buildListResponse(bookedRoom.getServices()));
+            response.setTotalPrice(bookedRoom.getTotalPrice() + bookedRoom.getTotalServicePrices());
             return response;
         } else {
             throw new BookedRoomNotFoundException("This room is not booked");

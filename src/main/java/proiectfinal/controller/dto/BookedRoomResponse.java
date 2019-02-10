@@ -11,7 +11,6 @@ public class BookedRoomResponse {
     private Long duration;
     private List<ServiceResponse> serviceList;
     private double totalPrice;
-    private double totalServicePrice;
     private Date checkIn;
     private Date checkOut;
 
@@ -48,10 +47,6 @@ public class BookedRoomResponse {
         this.totalPrice = totalPrice;
     }
 
-    public double getTotalServicePrice() {
-        return totalServicePrice;
-    }
-
     public Date getCheckIn() {
         return checkIn;
     }
@@ -68,7 +63,4 @@ public class BookedRoomResponse {
         this.checkOut = checkOut;
     }
 
-    public void setTotalServicePrice(double totalServicePrice) {
-        this.totalServicePrice = totalServicePrice;
-    }
 }

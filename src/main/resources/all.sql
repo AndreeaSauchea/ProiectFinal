@@ -79,3 +79,6 @@ create sequence measures_measure_id_seq
 
 alter table rooms
    alter column id set default nextval('measures_measure_id_seq');
+
+ALTER TABLE clients DROP COLUMN duration;
+ALTER TABLE clients ADD CONSTRAINT CNP UNIQUE (cnp);
