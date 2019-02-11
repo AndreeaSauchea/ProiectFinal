@@ -12,4 +12,7 @@ public interface RoomRepository extends CrudRepository<Room, Long> {
     @Override
     List<Room> findAll();
 
+    Room findByRoomNumber(int number);
+
+    List<Room> findByNumberPlacesGreaterThanEqual(int numberOfPersons);
 }

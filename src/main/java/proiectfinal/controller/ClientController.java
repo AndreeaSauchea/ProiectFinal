@@ -34,9 +34,9 @@ public class ClientController {
         return clientService.findById(id);
     }
 
-    @PutMapping("/clients/{id}")
-    public ClientResponse updateClient(@RequestBody ClientRequest newClientRequest, @PathVariable Long id) throws ClientNotFoundException {
-        return clientService.updateClient(id, newClientRequest);
+    @PutMapping("/clients/{cnp}")
+    public ClientResponse updateClient(@RequestBody ClientRequest newClientRequest, @PathVariable String cnp) throws ClientNotFoundException {
+        return clientService.updateByCnp(cnp, newClientRequest);
     }
 
     @DeleteMapping("/clients/{id}")

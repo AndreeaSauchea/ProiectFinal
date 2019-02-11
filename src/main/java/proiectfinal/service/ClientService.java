@@ -53,6 +53,8 @@ public class ClientService {
         validate(clientRequest);
         Client client = new Client();
         buildClient(client, clientRequest);
+        client.setStreetNumber(clientRequest.getStreetNumber());
+        client.setStreet(clientRequest.getStreet());
         Client saveClient = clientRepository.save(client);
         return buildResponse(saveClient);
     }
@@ -87,8 +89,6 @@ public class ClientService {
     public Client buildClient(Client client, ClientRequest clientRequest){
         client.setLastname(clientRequest.getName());
         client.setFirstname(clientRequest.getForename());
-        client.setStreetNumber(clientRequest.getStreetNumber());
-        client.setStreet(clientRequest.getStreet());
         client.setTypeID(clientRequest.getTypeID());
         client.setSeriesID(clientRequest.getSeriesID());
         client.setNumberID(clientRequest.getNumberID());
@@ -98,6 +98,17 @@ public class ClientService {
     }
 
     public ClientResponse findByCnp(String cnp) throws BookedRoomNotFoundException {
+        return buildByCnp(cnp);
+    }
+
+    public ClientResponse updateByCnp(String cnp, ClientRequest clientRequest) {
+        Client client = clientRepository.findByCnp(cnp);
+        buildClient(client, clientRequest);
+        Client saveClient = clientRepository.save(client);
+        return buildResponse(saveClient);
+    }
+
+    public ClientResponse buildByCnp(String cnp) throws BookedRoomNotFoundException {
         ClientResponse response = new ClientResponse();
         Client client = clientRepository.findByCnp(cnp);
         response.setName(client.getLastname());

@@ -18,4 +18,8 @@ public interface BookedRoomRepository extends CrudRepository<BookedRoom, Long> {
     BookedRoom findFirstByClientAndCheckOutAfterOrderByCheckOutDesc(Client client, Date today);
 
     BookedRoom findByRoom(Room room);
+
+    List<BookedRoom> findAllByRoomAndCheckOutAfter(Room room, Date today);
+
+    List<BookedRoom> findByCheckInBeforeAndCheckOutAfter(Date today,Date today1);
 }

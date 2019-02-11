@@ -4,11 +4,27 @@ import java.util.Date;
 import java.util.List;
 
 public class BookedRoomRequest {
-    private Long clientId;
-    private Long roomId;
+    private String cnp;
+    private int room;
     private Date checkIn;
     private Date checkOut;
     private List<Long> servicesId;
+
+    public String getCnp() {
+        return cnp;
+    }
+
+    public void setCnp(String cnp) {
+        this.cnp = cnp;
+    }
+
+    public int getRoom() {
+        return room;
+    }
+
+    public void setRoom(int room) {
+        this.room = room;
+    }
 
     public List<Long> getServicesId() {
         return servicesId;
@@ -16,14 +32,6 @@ public class BookedRoomRequest {
 
     public void setServicesId(List<Long> servicesId) {
         this.servicesId = servicesId;
-    }
-
-    public Long getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(Long clientId) {
-        this.clientId = clientId;
     }
 
     public Date getCheckIn() {
@@ -40,13 +48,5 @@ public class BookedRoomRequest {
 
     public void setCheckOut(Date checkOut) {
         this.checkOut = checkOut;
-    }
-
-    public Long getRoomId() {
-        return roomId;
-    }
-
-    public void setRoomId(Long roomId) {
-        this.roomId = roomId;
     }
 }

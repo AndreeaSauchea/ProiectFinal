@@ -39,7 +39,7 @@ public class BookedRoomController {
     }
 
     @PostMapping("/bookedrooms")
-    public BookedRoomResponse saveBookedRoom(@RequestBody BookedRoomRequest bookedRoomRequest) throws RoomNotFoundException, ClientNotFoundException {
+    public BookedRoomResponse saveBookedRoom(@RequestBody BookedRoomRequest bookedRoomRequest) throws RoomNotFoundException, ClientNotFoundException, BookedRoomNotFoundException {
         return bookedRoomService.save(bookedRoomRequest);
     }
 

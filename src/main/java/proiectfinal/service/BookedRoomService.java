@@ -48,11 +48,11 @@ public class BookedRoomService {
         return  responseList;
     }
 
-    public BookedRoomResponse save(BookedRoomRequest request) throws ClientNotFoundException, RoomNotFoundException{
+    public BookedRoomResponse save(BookedRoomRequest request) throws ClientNotFoundException, RoomNotFoundException, BookedRoomNotFoundException {
         validateRequest(request);
         BookedRoom bookedRoom = new BookedRoom();
-        bookedRoom.setClient(clientService.findClient(request.getClientId()));
-        bookedRoom.setRoom(roomService.findRoom(request.getRoomId()));
+        bookedRoom.setClient(clientRepository.findByCnp(request.getCnp()));
+        bookedRoom.setRoom(roomRepository.findByRoomNumber(request.getRoom()));
         bookedRoom.setCheckIn(request.getCheckIn());
         bookedRoom.setCheckOut(request.getCheckOut());
         BookedRoom saveBookedRoom = bookedRoomRepository.save(bookedRoom);
@@ -69,11 +69,11 @@ public class BookedRoomService {
     }
 
     private void validateRequest(BookedRoomRequest request) {
-        if (request.getClientId() == null) {
+        if (request.getCnp() == null) {
             throw new IllegalArgumentException("Client ID is NULL");
         }
-        if (request.getRoomId() == null){
-            throw new IllegalArgumentException("Room ID is NULL");
+        if (request.getRoom() == 0){
+            throw new IllegalArgumentException("You don`t have a room");
         }
         if (request.getCheckIn() == null){
             throw new IllegalArgumentException("There is no check in date.");
@@ -93,7 +93,7 @@ public class BookedRoomService {
 
     public BookedRoomResponse updateRoom(Long id, BookedRoomRequest newRequest) throws BookedRoomNotFoundException, RoomNotFoundException {
         BookedRoom bookedRoom = findBookedRoom(id);
-        bookedRoom.setRoom(roomService.findRoom(newRequest.getRoomId()));
+        bookedRoom.setRoom(roomRepository.findByRoomNumber(newRequest.getRoom()));
         bookedRoom.setCheckOut(newRequest.getCheckOut());
         bookedRoom.setCheckIn(newRequest.getCheckIn());
         BookedRoom saveBookedRoom = bookedRoomRepository.save(bookedRoom);
@@ -111,9 +111,10 @@ public class BookedRoomService {
 
     public List<ClientHistoryResponse> findHistoryClients() {
         List<ClientHistoryResponse> response = new ArrayList<>();
-        List<BookedRoom> historyBookedRoom = bookedRoomRepository.findAll();
-        ClientHistoryResponse clientHistoryResponse = new ClientHistoryResponse();
+        Date now = new Date();
+        List<BookedRoom> historyBookedRoom = bookedRoomRepository.findByCheckInBeforeAndCheckOutAfter(now,now);
         for (BookedRoom bookedRoom : historyBookedRoom) {
+            ClientHistoryResponse clientHistoryResponse = new ClientHistoryResponse();
             clientHistoryResponse.setCheckIn(bookedRoom.getCheckIn());
             clientHistoryResponse.setCheckOut(bookedRoom.getCheckOut());
             clientHistoryResponse.setFirstName(bookedRoom.getClient().getFirstname());
