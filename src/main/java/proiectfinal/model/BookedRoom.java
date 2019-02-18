@@ -34,9 +34,14 @@ public class BookedRoom {
     private Date checkIn;
     @Column(name = "check_out")
     private Date checkOut;
+    private Long duration;
 
     public Long getDuration() {
-        return ((this.checkOut.getTime() - this.checkIn.getTime()) / (24 * 60 * 60 * 1000));
+        return duration;
+    }
+
+    private void calculateDuration() {
+        this.duration =((this.checkOut.getTime() - this.checkIn.getTime()) / (24 * 60 * 60 * 1000));
     }
 
     public Long getId() {
@@ -105,6 +110,7 @@ public class BookedRoom {
         if (room == null) {
             return 0;
         }
+        calculateDuration();
         return room.getNightlyPrice() * this.getDuration();
     }
 

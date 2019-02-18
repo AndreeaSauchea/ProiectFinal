@@ -6,12 +6,21 @@ import java.util.Date;
 
 public class ClientHistoryResponse {
     private int room;
+    private Long roomId;
     private String lastName;
     private String firstName;
     @JsonFormat(pattern="yyyy-MM-dd")
     private Date checkIn;
     @JsonFormat(pattern="yyyy-MM-dd")
     private Date checkOut;
+
+    public Long getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(Long roomId) {
+        this.roomId = roomId;
+    }
 
     public int getRoom() {
         return room;

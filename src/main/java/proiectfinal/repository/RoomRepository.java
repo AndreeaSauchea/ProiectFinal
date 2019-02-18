@@ -15,4 +15,6 @@ public interface RoomRepository extends CrudRepository<Room, Long> {
     Room findByRoomNumber(int number);
 
     List<Room> findByNumberPlacesGreaterThanEqual(int numberOfPersons);
+
+
 }

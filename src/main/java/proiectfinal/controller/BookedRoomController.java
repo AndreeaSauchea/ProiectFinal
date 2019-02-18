@@ -5,9 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import proiectfinal.controller.dto.BookedRoomRequest;
 import proiectfinal.controller.dto.BookedRoomResponse;
 import proiectfinal.controller.dto.ClientHistoryResponse;
-import proiectfinal.exception.BookedRoomNotFoundException;
-import proiectfinal.exception.ClientNotFoundException;
-import proiectfinal.exception.RoomNotFoundException;
+import proiectfinal.exception.*;
 import proiectfinal.service.BookedRoomService;
 
 import java.util.List;
@@ -19,7 +17,7 @@ public class BookedRoomController {
     private BookedRoomService bookedRoomService;
 
     @GetMapping("/bookedrooms/room/{roomId}")
-    public BookedRoomResponse findBookedRoomByRoom(@PathVariable Long roomId) throws BookedRoomNotFoundException {
+    public BookedRoomResponse findBookedRoomByRoom(@PathVariable Long roomId) throws BookedRoomNotFoundException, RoomNotFoundException, ClientNotFoundException, NoFirstNameException, NoLastNameException, NoServicesOnThisListException {
         return bookedRoomService.findBookedRoomByRoom(roomId);
     }
 
@@ -29,7 +27,7 @@ public class BookedRoomController {
     }
 
     @GetMapping("/bookedrooms/history")
-    public List<ClientHistoryResponse> findHistoryClients(){
+    public List<ClientHistoryResponse> findHistoryClients() throws BookedRoomNotFoundException, ClientNotFoundException, RoomNotFoundException, CheckOutNotFoundException, CheckInNotFoundException, NoLastNameException, NoFirstNameException, NoRoomNumberException, NoRoomIdException, HotelIsNotBookedException {
         return bookedRoomService.findHistoryClients();
     }
 
@@ -39,7 +37,7 @@ public class BookedRoomController {
     }
 
     @PostMapping("/bookedrooms")
-    public BookedRoomResponse saveBookedRoom(@RequestBody BookedRoomRequest bookedRoomRequest) throws RoomNotFoundException, ClientNotFoundException, BookedRoomNotFoundException {
+    public BookedRoomResponse saveBookedRoom(@RequestBody BookedRoomRequest bookedRoomRequest) throws RoomNotFoundException, ClientNotFoundException, BookedRoomNotSavedException {
         return bookedRoomService.save(bookedRoomRequest);
     }
 
@@ -49,7 +47,7 @@ public class BookedRoomController {
     }
 
     @PutMapping("/bookedrooms/{id}")
-    public BookedRoomResponse updateBookedRoom(@RequestBody BookedRoomRequest newRequest, @PathVariable Long id) throws BookedRoomNotFoundException, RoomNotFoundException {
+    public BookedRoomResponse updateBookedRoom(@RequestBody BookedRoomRequest newRequest, @PathVariable Long id) throws BookedRoomNotFoundException, RoomNotFoundException, NoRoomNumberException {
         return bookedRoomService.updateRoom(id, newRequest);
     }
 

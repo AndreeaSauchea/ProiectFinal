@@ -26,7 +26,7 @@ public class CheckRoomAvailability {
     @InjectMocks
     private RoomService roomService;
 
-    DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+    private DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
     @Test
     public void validateCheckRoomIfBookedCheckOutInDates() throws ParseException {
