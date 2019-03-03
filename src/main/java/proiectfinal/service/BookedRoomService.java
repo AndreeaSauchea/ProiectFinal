@@ -86,11 +86,16 @@ public class BookedRoomService {
         if (room == null) {
             throw new RoomNotFoundException(ROOM_WAS_NOT_FOUND);
         } else {
-            List <BookedRoom> bookedRoomList = isRoomBooked(room, request.getCheckIn(), request.getCheckOut());
-            if (bookedRoomList != null){
-                throw new RoomIsAlreadyBookedException(THIS_ROOM_IS_ALREADY_BOOKED);
-            } else {
+            List<BookedRoom> neverBookedList = bookedRoomRepository.findAllByRoom(room);
+            if(neverBookedList.size() == 0){
                 bookedRoom.setRoom(room);
+            } else {
+                List<BookedRoom> bookedRoomList = isRoomBooked(room, request.getCheckIn(), request.getCheckOut());
+                if (bookedRoomList.size() == 0) {
+                    throw new RoomIsAlreadyBookedException(THIS_ROOM_IS_ALREADY_BOOKED);
+                } else {
+                    bookedRoom.setRoom(room);
+                }
             }
         }
         bookedRoom.setCheckIn(request.getCheckIn());
@@ -316,7 +321,8 @@ public class BookedRoomService {
     public void removeBookedRoomActivity(Long roomId, Long activityId) throws Exception {
         Room room = new OptionalEntityUtils<Room>().getEntityOrException(roomRepository.findById(roomId),
                 new RoomNotFoundException(ROOM_WAS_NOT_FOUND));
-        BookedRoom bookedRoom = bookedRoomRepository.findByRoom(room);
+        Date now = new Date();
+        BookedRoom bookedRoom = bookedRoomRepository.findByRoomAndCheckInBeforeAndCheckOutAfter(room, now, now);
         Service service = new OptionalEntityUtils<Service>().getEntityOrException(serviceReopository.findById(activityId),
                 new ServiceNotFoundException(ACTIVITY_WAS_NOT_FOUND));
         bookedRoom.removeService(service);
