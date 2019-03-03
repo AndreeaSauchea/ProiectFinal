@@ -82,3 +82,6 @@ alter table rooms
 
 ALTER TABLE clients DROP COLUMN duration;
 ALTER TABLE clients ADD CONSTRAINT CNP UNIQUE (cnp);
+ALTER TABLE public.bookedrooms ADD COLUMN duration bigint;
+alter table clients alter column street drop not null;
+alter table clients alter column street_number drop not null;

@@ -17,12 +17,12 @@ public class BookedRoomController {
     private BookedRoomService bookedRoomService;
 
     @GetMapping("/bookedrooms/room/{roomId}")
-    public BookedRoomResponse findBookedRoomByRoom(@PathVariable Long roomId) throws BookedRoomNotFoundException, RoomNotFoundException, ClientNotFoundException, NoFirstNameException, NoLastNameException, NoServicesOnThisListException {
+    public BookedRoomResponse findBookedRoomByRoom(@PathVariable Long roomId) throws Exception {
         return bookedRoomService.findBookedRoomByRoom(roomId);
     }
 
     @GetMapping("/bookedrooms/client/{clientId}")
-    public BookedRoomResponse findBookedRoomByClient(@PathVariable Long clientId) throws BookedRoomNotFoundException {
+    public BookedRoomResponse findBookedRoomByClient(@PathVariable Long clientId) throws Exception {
         return bookedRoomService.findBookedRoomByClient(clientId);
     }
 
@@ -36,18 +36,18 @@ public class BookedRoomController {
         return bookedRoomService.findAll();
     }
 
-    @PostMapping("/bookedrooms")
-    public BookedRoomResponse saveBookedRoom(@RequestBody BookedRoomRequest bookedRoomRequest) throws RoomNotFoundException, ClientNotFoundException, BookedRoomNotSavedException {
+    @PostMapping("/bookedroom")
+    public BookedRoomResponse saveBookedRoom(@RequestBody BookedRoomRequest bookedRoomRequest) throws RoomNotFoundException, ClientNotFoundException, BookedRoomNotSavedException, RoomIsAlreadyBookedException {
         return bookedRoomService.save(bookedRoomRequest);
     }
 
     @GetMapping("/bookedrooms/{id}")
-    public BookedRoomResponse getBookedRoomById(@PathVariable Long id) throws BookedRoomNotFoundException {
+    public BookedRoomResponse getBookedRoomById(@PathVariable Long id) throws Exception {
         return bookedRoomService.findById(id);
     }
 
     @PutMapping("/bookedrooms/{id}")
-    public BookedRoomResponse updateBookedRoom(@RequestBody BookedRoomRequest newRequest, @PathVariable Long id) throws BookedRoomNotFoundException, RoomNotFoundException, NoRoomNumberException {
+    public BookedRoomResponse updateBookedRoom(@RequestBody BookedRoomRequest newRequest, @PathVariable Long id) throws Exception {
         return bookedRoomService.updateRoom(id, newRequest);
     }
 
@@ -57,12 +57,12 @@ public class BookedRoomController {
     }
 
     @PutMapping("bookedroom/{roomId}/activity/{activityId}/add")
-    public void addBookedRoomActivity(@PathVariable Long roomId, @PathVariable Long activityId){
+    public void addBookedRoomActivity(@PathVariable Long roomId, @PathVariable Long activityId) throws Exception {
         bookedRoomService.addBookedRoomActivity(roomId,activityId);
     }
 
     @PutMapping("bookedroom/{roomId}/activity/{activityId}/remove")
-    public void removeBookedRoomActivity(@PathVariable Long roomId, @PathVariable Long activityId){
+    public void removeBookedRoomActivity(@PathVariable Long roomId, @PathVariable Long activityId) throws Exception {
         bookedRoomService.removeBookedRoomActivity(roomId,activityId);
     }
 

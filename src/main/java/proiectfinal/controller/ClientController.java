@@ -2,12 +2,8 @@ package proiectfinal.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import proiectfinal.controller.dto.ClientHistoryResponse;
 import proiectfinal.controller.dto.ClientRequest;
 import proiectfinal.controller.dto.ClientResponse;
-import proiectfinal.exception.BookedRoomNotFoundException;
-import proiectfinal.exception.ClientNotFoundException;
-import proiectfinal.model.History;
 import proiectfinal.service.ClientService;
 
 import java.util.List;
@@ -30,12 +26,12 @@ public class ClientController {
     }
 
     @GetMapping("/clients/{id}")
-    public ClientResponse getClientById(@PathVariable Long id) throws ClientNotFoundException {
+    public ClientResponse getClientById(@PathVariable Long id) throws Exception {
         return clientService.findById(id);
     }
 
     @PutMapping("/clients/{cnp}")
-    public ClientResponse updateClient(@RequestBody ClientRequest newClientRequest, @PathVariable String cnp) throws ClientNotFoundException {
+    public ClientResponse updateClient(@RequestBody ClientRequest newClientRequest, @PathVariable String cnp) throws Exception {
         return clientService.updateByCnp(cnp, newClientRequest);
     }
 
@@ -46,7 +42,7 @@ public class ClientController {
 
     @CrossOrigin
     @GetMapping("/clients/cnp/{cnp}")
-    public ClientResponse findByCnp(@PathVariable String cnp) throws BookedRoomNotFoundException {
+    public ClientResponse findByCnp(@PathVariable String cnp) throws Exception {
         return clientService.findByCnp(cnp);
     }
 

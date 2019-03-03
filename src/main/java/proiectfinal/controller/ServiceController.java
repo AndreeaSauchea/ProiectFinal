@@ -27,12 +27,12 @@ public class ServiceController {
     }
 
     @GetMapping("/services/{id}")
-    public ServiceResponse getServeceById(@PathVariable Long id) throws ServiceNotFoundException {
+    public ServiceResponse getServeceById(@PathVariable Long id) throws Exception {
         return serviceService.findById(id);
     }
 
     @PutMapping("/services/{id}")
-    ServiceResponse updateService(@RequestBody ServiceRequest newServiceRequest, @PathVariable Long id) throws ServiceNotFoundException {
+    ServiceResponse updateService(@RequestBody ServiceRequest newServiceRequest, @PathVariable Long id) throws Exception {
         return serviceService.updateService(id, newServiceRequest);
     }
 

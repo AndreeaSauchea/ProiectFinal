@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
 
 @ResponseStatus(NOT_ACCEPTABLE)
-public class NoRoomNumberException extends Exception {
+public class RoomIsAlreadyBookedException extends Exception {
 
     private HttpStatus status = NOT_ACCEPTABLE;
 
@@ -14,14 +14,14 @@ public class NoRoomNumberException extends Exception {
         return status;
     }
 
-    public NoRoomNumberException() {
+    public RoomIsAlreadyBookedException() {
     }
 
-    public NoRoomNumberException(String message) {
+    public RoomIsAlreadyBookedException(String message) {
         super(message);
     }
 
-    public NoRoomNumberException(String message, Throwable cause) {
+    public RoomIsAlreadyBookedException(String message, Throwable cause) {
         super(message, cause);
     }
 }

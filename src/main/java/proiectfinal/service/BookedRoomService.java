@@ -1,8 +1,11 @@
 package proiectfinal.service;
 
+import com.google.common.base.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import proiectfinal.controller.dto.*;
+import proiectfinal.controller.dto.BookedRoomRequest;
+import proiectfinal.controller.dto.BookedRoomResponse;
+import proiectfinal.controller.dto.ClientHistoryResponse;
 import proiectfinal.exception.*;
 import proiectfinal.model.BookedRoom;
 import proiectfinal.model.Client;
@@ -12,11 +15,10 @@ import proiectfinal.repository.BookedRoomRepository;
 import proiectfinal.repository.ClientRepository;
 import proiectfinal.repository.RoomRepository;
 import proiectfinal.repository.ServiceReopository;
-
+import proiectfinal.utils.OptionalEntityUtils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 
 @Component
@@ -46,6 +48,9 @@ public class BookedRoomService {
     public static final String THERE_ARE_NO_SERVICES_ON_THIS_LIST = "There are no services on this list";
     public static final String THERE_IS_NO_ROOM_NUMBER_IN_THE_REQUEST = "There is no room number in the request";
     public static final String NO_BOOKEDROOM_FOR_THIS_ID = "No bookedroom for this id";
+    public static final String ACTIVITY_WAS_NOT_FOUND = "Activity was not found";
+    public static final String CLIENT_ID_IS_NULL = "Client id is null";
+    public static final String THIS_ROOM_IS_ALREADY_BOOKED = "This room is already booked";
     @Autowired
     private BookedRoomRepository bookedRoomRepository;
     @Autowired
@@ -56,65 +61,79 @@ public class BookedRoomService {
     private ServiceReopository serviceReopository;
     @Autowired
     private ClientRepository clientRepository;
+    @Autowired
+    private RoomService roomService;
 
     public List<BookedRoomResponse> findAll() {
-        List<BookedRoom> bookedRoomList = (List<BookedRoom>) bookedRoomRepository.findAll();
+        List<BookedRoom> bookedRoomList = bookedRoomRepository.findAll();
         List<BookedRoomResponse> responseList = new ArrayList<>();
-        for (BookedRoom addBookedRoom : bookedRoomList){
-          responseList.add(buildResponse(addBookedRoom));
+        for (BookedRoom addBookedRoom : bookedRoomList) {
+            responseList.add(buildResponse(addBookedRoom));
         }
-        return  responseList;
+        return responseList;
     }
 
-    public BookedRoomResponse save(BookedRoomRequest request) throws ClientNotFoundException, RoomNotFoundException, BookedRoomNotSavedException {
+    public BookedRoomResponse save(BookedRoomRequest request) throws ClientNotFoundException, RoomNotFoundException, BookedRoomNotSavedException, RoomIsAlreadyBookedException {
         validateRequest(request);
         BookedRoom bookedRoom = new BookedRoom();
         Client client = clientRepository.findByCnp(request.getCnp());
-        if (client == null){
+        if (client == null) {
             throw new ClientNotFoundException(CLIENT_WAS_NOT_FOUND);
         } else {
             bookedRoom.setClient(client);
         }
         Room room = roomRepository.findByRoomNumber(request.getRoom());
-        if (room == null){
+        if (room == null) {
             throw new RoomNotFoundException(ROOM_WAS_NOT_FOUND);
         } else {
-            bookedRoom.setRoom(roomRepository.findByRoomNumber(request.getRoom()));
+            List <BookedRoom> bookedRoomList = isRoomBooked(room, request.getCheckIn(), request.getCheckOut());
+            if (bookedRoomList != null){
+                throw new RoomIsAlreadyBookedException(THIS_ROOM_IS_ALREADY_BOOKED);
+            } else {
+                bookedRoom.setRoom(room);
+            }
         }
         bookedRoom.setCheckIn(request.getCheckIn());
         bookedRoom.setCheckOut(request.getCheckOut());
         BookedRoom saveBookedRoom = bookedRoomRepository.save(bookedRoom);
-        if (saveBookedRoom == null){
-            throw new BookedRoomNotSavedException(YOUR_BOOKED_ROOM_WAS_NOT_SAVED_IN_THE_DATABASE);
+        return buildResponse(saveBookedRoom);
+    }
 
-        } else {
-            return buildResponse(saveBookedRoom);
+    private List<BookedRoom> isRoomBooked(Room room, Date checkIn, Date checkOut) {
+        List<BookedRoom> bookedRoomList = bookedRoomRepository.findAllByRoom(room);
+        List<BookedRoom> bookedRoomsToRemove = new ArrayList<>();
+        for (BookedRoom bookedRoom : bookedRoomList){
+            boolean free = roomService.checkRoomIfBooked(bookedRoom,checkIn,checkOut);
+            if (!free){
+                bookedRoomsToRemove.add(bookedRoom);
+            }
         }
-
+        bookedRoomList.removeAll(bookedRoomsToRemove);
+        return bookedRoomList;
     }
 
     private void validateBookedRoom(BookedRoom bookedRoom) throws ClientNotFoundException, RoomNotFoundException, CheckInNotFoundException, CheckOutNotFoundException, NoFirstNameException, NoLastNameException, NoRoomNumberException, NoRoomIdException {
-        if (bookedRoom.getCheckIn() == null){
+        if (bookedRoom.getCheckIn() == null) {
             throw new CheckInNotFoundException(THERE_IS_NO_CHECK_IN_DATE);
         }
-        if (bookedRoom.getCheckOut() == null){
-            throw  new CheckOutNotFoundException(THERE_IS_NO_CHECK_OUT_DATE);
+        if (bookedRoom.getCheckOut() == null) {
+            throw new CheckOutNotFoundException(THERE_IS_NO_CHECK_OUT_DATE);
         }
         Client client = bookedRoom.getClient();
-        if (client == null){
+        if (client == null) {
             throw new ClientNotFoundException(CLIENT_WAS_NOT_FOUND);
         } else {
-            if (client.getFirstname() == null){
+            if (client.getFirstname() == null) {
                 throw new NoFirstNameException(CLIENT_HAS_NO_FIRST_NAME);
             } else if (client.getLastname() == null) {
                 throw new NoLastNameException(CLIENT_HAS_NO_LAST_NAME);
             }
         }
         Room room = bookedRoom.getRoom();
-        if (room == null){
+        if (room == null) {
             throw new RoomNotFoundException(ROOM_WAS_NOT_FOUND);
         } else {
-            if(room.getRoomNumber() == 0){
+            if (room.getRoomNumber() == 0) {
                 throw new NoRoomNumberException(ROOM_HAS_NO_NUMBER);
             } else if (room.getId() == null) {
                 throw new NoRoomIdException(ROOM_HAS_NO_ID);
@@ -126,6 +145,7 @@ public class BookedRoomService {
 
     private BookedRoomResponse buildResponse(BookedRoom saveBookedRoom) {
         BookedRoomResponse response = new BookedRoomResponse();
+        response.setRoom(saveBookedRoom.getRoom().getRoomNumber());
         response.setTotalPrice(saveBookedRoom.getTotalPrice());
         response.setCheckIn(saveBookedRoom.getCheckIn());
         response.setCheckOut(saveBookedRoom.getCheckOut());
@@ -133,27 +153,27 @@ public class BookedRoomService {
     }
 
     private void validateRequest(BookedRoomRequest request) {
-        if (request == null){
+        if (request == null) {
             throw new IllegalArgumentException(REQUEST_CAN_NOT_BE_NULL);
         }
-        if (request.getCnp() == null) {
+        if (Strings.isNullOrEmpty(request.getCnp())) {
             throw new IllegalArgumentException(CLIENT_CNP_IS_NULL);
         }
-        if (request.getRoom() == 0){
+        if (request.getRoom() == 0) {
             throw new IllegalArgumentException(YOU_DON_T_HAVE_A_ROOM);
         }
-        if (request.getCheckIn() == null){
+        if (request.getCheckIn() == null) {
             throw new IllegalArgumentException(THERE_IS_NO_CHECK_IN_DATE);
         }
-        if (request.getCheckOut() == null){
-            throw  new IllegalArgumentException(THERE_IS_NO_CHECK_OUT_DATE);
+        if (request.getCheckOut() == null) {
+            throw new IllegalArgumentException(THERE_IS_NO_CHECK_OUT_DATE);
         }
-        if (request.getCheckIn().after(request.getCheckOut())){
+        if (request.getCheckIn().after(request.getCheckOut())) {
             throw new IllegalArgumentException(CHECK_IN_CAN_NOT_BE_AFTER_CHECK_OUT);
         }
     }
 
-    public BookedRoomResponse findById(long id) throws BookedRoomNotFoundException {
+    public BookedRoomResponse findById(long id) throws Exception {
         return buildResponse(findBookedRoom(id));
     }
 
@@ -161,44 +181,54 @@ public class BookedRoomService {
         bookedRoomRepository.deleteById(id);
     }
 
-    public BookedRoomResponse updateRoom(Long id, BookedRoomRequest newRequest) throws BookedRoomNotFoundException, RoomNotFoundException, NoRoomNumberException {
+    public BookedRoomResponse updateRoom(Long id, BookedRoomRequest newRequest) throws Exception {
         if (id == null) {
             throw new IllegalArgumentException(ID_CAN_NOT_BE_NULL);
         }
         BookedRoom bookedRoom = findBookedRoom(id);
-        if (bookedRoom == null){
+        if (bookedRoom == null) {
             throw new BookedRoomNotFoundException(BOOKEDROOM_NOT_FOUND);
         }
-        int roomNumber = newRequest.getRoom();
-        if (newRequest == null){
+        if (newRequest == null) {
             throw new IllegalArgumentException(REQUEST_CAN_NOT_BE_NULL);
         } else {
+            int roomNumber = newRequest.getRoom();
             if (roomNumber == 0) {
                 throw new NoRoomNumberException(THERE_IS_NO_ROOM_NUMBER_IN_THE_REQUEST);
             } else {
                 bookedRoom.setRoom(roomRepository.findByRoomNumber(roomNumber));
             }
-            bookedRoom.setCheckOut(newRequest.getCheckOut());
-            bookedRoom.setCheckIn(newRequest.getCheckIn());
+            Date checkIn = newRequest.getCheckIn();
+            if (checkIn == null) {
+                throw new CheckInNotFoundException(THERE_IS_NO_CHECK_IN_DATE);
+            } else {
+                bookedRoom.setCheckIn(checkIn);
+            }
+            Date checkOut = newRequest.getCheckOut();
+            if (checkOut == null) {
+                throw new CheckOutNotFoundException(THERE_IS_NO_CHECK_OUT_DATE);
+            } else {
+                bookedRoom.setCheckOut(checkOut);
+            }
+            if (checkIn.after(checkOut)) {
+                throw new IllegalArgumentException(CHECK_IN_CAN_NOT_BE_AFTER_CHECK_OUT);
+            }
         }
         BookedRoom saveBookedRoom = bookedRoomRepository.save(bookedRoom);
         return buildResponse(saveBookedRoom);
     }
 
-    private BookedRoom findBookedRoom(Long bookedRoomId) throws BookedRoomNotFoundException {
-        Optional<BookedRoom> optionalBookedRoom = bookedRoomRepository.findById(bookedRoomId);
-        if (optionalBookedRoom.isPresent()){
-            return optionalBookedRoom.get();
-        } else {
-            throw new BookedRoomNotFoundException(BOOKEDROOM_NOT_FOUND);
-        }
+    private BookedRoom findBookedRoom(Long bookedRoomId) throws Exception {
+        BookedRoom bookedRoom = new OptionalEntityUtils<BookedRoom>().getEntityOrException(bookedRoomRepository.findById(bookedRoomId),
+                new BookedRoomNotFoundException(BOOKEDROOM_NOT_FOUND));
+        return bookedRoom;
     }
 
     public List<ClientHistoryResponse> findHistoryClients() throws RoomNotFoundException, ClientNotFoundException, CheckOutNotFoundException, CheckInNotFoundException, NoLastNameException, NoFirstNameException, NoRoomNumberException, NoRoomIdException, HotelIsNotBookedException {
         List<ClientHistoryResponse> response = new ArrayList<>();
         Date now = new Date();
-        List<BookedRoom> historyBookedRoom = bookedRoomRepository.findByCheckInBeforeAndCheckOutAfter(now,now);
-        if (historyBookedRoom == null){
+        List<BookedRoom> historyBookedRoom = bookedRoomRepository.findByCheckInBeforeAndCheckOutAfter(now, now);
+        if (historyBookedRoom == null) {
             throw new HotelIsNotBookedException(NO_ROOM_IS_BOOKED_IN_THIS_HOTEL);
         } else {
             for (BookedRoom bookedRoom : historyBookedRoom) {
@@ -218,26 +248,23 @@ public class BookedRoomService {
 
     }
 
-    public BookedRoomResponse findBookedRoomByRoom(Long roomId) throws BookedRoomNotFoundException, RoomNotFoundException, ClientNotFoundException, NoFirstNameException, NoLastNameException, NoServicesOnThisListException {
-        if (roomId == null){
+    public BookedRoomResponse findBookedRoomByRoom(Long roomId) throws Exception {
+        if (roomId == null) {
             throw new IllegalArgumentException(ID_CAN_NOT_BE_NULL);
         } else {
             BookedRoomResponse response = new BookedRoomResponse();
-            Optional<Room> roomOptional = roomRepository.findById(roomId);
-            if (roomOptional == null){
-                throw new RoomNotFoundException(ROOM_WAS_NOT_FOUND);
-            }
-            Room room = roomOptional.get();
+            Room room = new OptionalEntityUtils<Room>().getEntityOrException(roomRepository.findById(roomId),
+                    new RoomNotFoundException(ROOM_WAS_NOT_FOUND));
             Date now = new Date();
-            BookedRoom bookedRoom = bookedRoomRepository.findFirstByRoomAndCheckOutAfterOrderByCheckOutDesc(room, now);
+            BookedRoom bookedRoom = bookedRoomRepository.findFirstByRoomAndCheckInBeforeAndCheckOutAfterOrderByCheckOutDesc(room, now, now);
             if (bookedRoom != null) {
                 Client client = bookedRoom.getClient();
-                if (client == null){
+                if (client == null) {
                     throw new ClientNotFoundException(CLIENT_NOT_FOUND);
                 } else {
-                    if (client.getFirstname() == null){
+                    if (Strings.isNullOrEmpty(client.getFirstname())) {
                         throw new NoFirstNameException(NO_FIRST_NAME_FOUND);
-                    } else if (client.getLastname() == null){
+                    } else if (Strings.isNullOrEmpty(client.getLastname())) {
                         throw new NoLastNameException(NO_LAST_NAME_WAS_FOUND);
                     } else {
                         response.setClient(client.getFirstname() + " " + client.getLastname());
@@ -259,29 +286,39 @@ public class BookedRoomService {
 
     }
 
-    public BookedRoomResponse findBookedRoomByClient(Long clientId) throws BookedRoomNotFoundException {
+    public BookedRoomResponse findBookedRoomByClient(Long clientId) throws Exception {
         BookedRoomResponse response = new BookedRoomResponse();
-        Client client = clientRepository.findById(clientId).get();
+        if (clientId == null) {
+            throw new IllegalArgumentException(CLIENT_ID_IS_NULL);
+        }
+        Client client = new OptionalEntityUtils<Client>().getEntityOrException(clientRepository.findById(clientId),
+                new ClientNotFoundException(CLIENT_WAS_NOT_FOUND));
         Date now = new Date();
         BookedRoom bookedRoom = bookedRoomRepository.findFirstByClientAndCheckOutAfterOrderByCheckOutDesc(client, now);
-        if (bookedRoom != null){
-            response.setRoom(bookedRoom.getRoom().getRoomNumber());
+        if (bookedRoom == null) {
+            throw new BookedRoomNotFoundException(BOOKEDROOM_NOT_FOUND);
         }
+        response.setRoom(bookedRoom.getRoom().getRoomNumber());
         return response;
     }
 
-    public void addBookedRoomActivity(Long roomId,Long activityId){
-        Room room = roomRepository.findById(roomId).get();
-        BookedRoom bookedRoom = bookedRoomRepository.findByRoom(room);
-        Service service = serviceReopository.findById(activityId).get();
+    public void addBookedRoomActivity(Long roomId, Long activityId) throws Exception {
+        Room room = new OptionalEntityUtils<Room>().getEntityOrException(roomRepository.findById(roomId),
+                new RoomNotFoundException(ROOM_WAS_NOT_FOUND));
+        Date now = new Date();
+        BookedRoom bookedRoom = bookedRoomRepository.findByRoomAndCheckInBeforeAndCheckOutAfter(room, now, now);
+        Service service = new OptionalEntityUtils<Service>().getEntityOrException(serviceReopository.findById(activityId),
+                new ServiceNotFoundException(ACTIVITY_WAS_NOT_FOUND));
         bookedRoom.addService(service);
         bookedRoomRepository.save(bookedRoom);
     }
 
-    public void removeBookedRoomActivity(Long roomId, Long activityId) {
-        Room room = roomRepository.findById(roomId).get();
+    public void removeBookedRoomActivity(Long roomId, Long activityId) throws Exception {
+        Room room = new OptionalEntityUtils<Room>().getEntityOrException(roomRepository.findById(roomId),
+                new RoomNotFoundException(ROOM_WAS_NOT_FOUND));
         BookedRoom bookedRoom = bookedRoomRepository.findByRoom(room);
-        Service service = serviceReopository.findById(activityId).get();
+        Service service = new OptionalEntityUtils<Service>().getEntityOrException(serviceReopository.findById(activityId),
+                new ServiceNotFoundException(ACTIVITY_WAS_NOT_FOUND));
         bookedRoom.removeService(service);
         bookedRoomRepository.save(bookedRoom);
     }

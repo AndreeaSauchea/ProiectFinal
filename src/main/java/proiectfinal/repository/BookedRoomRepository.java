@@ -13,13 +13,17 @@ public interface BookedRoomRepository extends CrudRepository<BookedRoom, Long> {
     @Override
     List<BookedRoom> findAll();
 
-    BookedRoom findFirstByRoomAndCheckOutAfterOrderByCheckOutDesc(Room room, Date today);
+    BookedRoom findFirstByRoomAndCheckInBeforeAndCheckOutAfterOrderByCheckOutDesc(Room room, Date today, Date today1);
 
     BookedRoom findFirstByClientAndCheckOutAfterOrderByCheckOutDesc(Client client, Date today);
 
     BookedRoom findByRoom(Room room);
 
+    List<BookedRoom> findAllByRoom(Room room);
+
     List<BookedRoom> findAllByRoomAndCheckOutAfter(Room room, Date today);
 
     List<BookedRoom> findByCheckInBeforeAndCheckOutAfter(Date today,Date today1);
+
+    BookedRoom findByRoomAndCheckInBeforeAndCheckOutAfter(Room room, Date today, Date today1);
 }

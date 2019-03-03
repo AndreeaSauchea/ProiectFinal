@@ -26,7 +26,10 @@ import proiectfinal.service.ServiceService;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static proiectfinal.service.BookedRoomService.*;
@@ -57,23 +60,22 @@ public class BookedRoomServiceTest {
     private DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
 
-
     @Test
-    public void validateSaveBookedRoomRequestIsNull() throws ClientNotFoundException, RoomNotFoundException, BookedRoomNotSavedException {
+    public void validateSaveBookedRoomRequestIsNull() throws ClientNotFoundException, RoomNotFoundException, BookedRoomNotSavedException, RoomIsAlreadyBookedException {
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage(REQUEST_CAN_NOT_BE_NULL);
         bookedRoomService.save(null);
     }
 
     @Test
-    public void validateRequestCnpIsNull() throws ClientNotFoundException, RoomNotFoundException, BookedRoomNotSavedException {
+    public void validateRequestCnpIsNull() throws ClientNotFoundException, RoomNotFoundException, BookedRoomNotSavedException, RoomIsAlreadyBookedException {
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage(CLIENT_CNP_IS_NULL);
         bookedRoomService.save(new BookedRoomRequest());
     }
 
     @Test
-    public void validateRequestRoomIsNull() throws ClientNotFoundException, RoomNotFoundException, BookedRoomNotSavedException {
+    public void validateRequestRoomIsNull() throws ClientNotFoundException, RoomNotFoundException, BookedRoomNotSavedException, RoomIsAlreadyBookedException {
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage(YOU_DON_T_HAVE_A_ROOM);
         BookedRoomRequest request = new BookedRoomRequest();
@@ -82,7 +84,7 @@ public class BookedRoomServiceTest {
     }
 
     @Test
-    public void validateRequestCheckInIsNull() throws ClientNotFoundException, RoomNotFoundException, BookedRoomNotSavedException {
+    public void validateRequestCheckInIsNull() throws ClientNotFoundException, RoomNotFoundException, BookedRoomNotSavedException, RoomIsAlreadyBookedException {
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage(THERE_IS_NO_CHECK_IN_DATE);
         BookedRoomRequest request = new BookedRoomRequest();
@@ -92,7 +94,7 @@ public class BookedRoomServiceTest {
     }
 
     @Test
-    public void validateRequestCheckOutIsNull() throws ClientNotFoundException, RoomNotFoundException, ParseException, BookedRoomNotSavedException {
+    public void validateRequestCheckOutIsNull() throws ClientNotFoundException, RoomNotFoundException, ParseException, BookedRoomNotSavedException, RoomIsAlreadyBookedException {
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage(THERE_IS_NO_CHECK_OUT_DATE);
         BookedRoomRequest request = new BookedRoomRequest();
@@ -103,7 +105,7 @@ public class BookedRoomServiceTest {
     }
 
     @Test
-    public void validateRequestCheckInIsAfterCheckOut() throws ClientNotFoundException, RoomNotFoundException, ParseException, BookedRoomNotSavedException {
+    public void validateRequestCheckInIsAfterCheckOut() throws ClientNotFoundException, RoomNotFoundException, ParseException, BookedRoomNotSavedException, RoomIsAlreadyBookedException {
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage(CHECK_IN_CAN_NOT_BE_AFTER_CHECK_OUT);
         BookedRoomRequest request = new BookedRoomRequest();
@@ -115,7 +117,7 @@ public class BookedRoomServiceTest {
     }
 
     @Test
-    public void validateBookedroomClientNotFound() throws ParseException, ClientNotFoundException, RoomNotFoundException, BookedRoomNotSavedException {
+    public void validateBookedroomClientNotFound() throws ParseException, ClientNotFoundException, RoomNotFoundException, BookedRoomNotSavedException, RoomIsAlreadyBookedException {
         expectedException.expect(ClientNotFoundException.class);
         expectedException.expectMessage(CLIENT_WAS_NOT_FOUND);
         BookedRoomRequest request = buildMockBookedRoomRequest();
@@ -124,7 +126,7 @@ public class BookedRoomServiceTest {
     }
 
     @Test
-    public void validateBookedroomRoomNotFound() throws ParseException, ClientNotFoundException, RoomNotFoundException, BookedRoomNotSavedException {
+    public void validateBookedroomRoomNotFound() throws ParseException, ClientNotFoundException, RoomNotFoundException, BookedRoomNotSavedException, RoomIsAlreadyBookedException {
         expectedException.expect(RoomNotFoundException.class);
         expectedException.expectMessage(ROOM_WAS_NOT_FOUND);
         BookedRoomRequest request = buildMockBookedRoomRequest();
@@ -135,21 +137,7 @@ public class BookedRoomServiceTest {
     }
 
     @Test
-    public void validateSaveBookedRoomIfSaveFails() throws ParseException, ClientNotFoundException, RoomNotFoundException, BookedRoomNotSavedException {
-        expectedException.expect(BookedRoomNotSavedException.class);
-        expectedException.expectMessage(YOUR_BOOKED_ROOM_WAS_NOT_SAVED_IN_THE_DATABASE);
-        BookedRoomRequest request = buildMockBookedRoomRequest();
-        Client client = buildMockClient();
-        Mockito.when(clientRepository.findByCnp("2991025417689")).thenReturn(client);
-        Room room = buildMockRoom();
-        Mockito.when(roomRepository.findByRoomNumber(1)).thenReturn(room);
-        Mockito.when(bookedRoomRepository.save(any(BookedRoom.class))).thenReturn(null);
-        bookedRoomService.save(request);
-    }
-
-
-   @Test
-    public void validateBuildResponse() throws ParseException, BookedRoomNotSavedException, ClientNotFoundException, RoomNotFoundException {
+    public void validateBuildResponseForSave() throws ParseException, BookedRoomNotSavedException, ClientNotFoundException, RoomNotFoundException, RoomIsAlreadyBookedException {
         BookedRoomRequest request = buildMockBookedRoomRequest();
         Client client = buildMockClient();
         Mockito.when(clientRepository.findByCnp("2991025417689")).thenReturn(client);
@@ -158,7 +146,7 @@ public class BookedRoomServiceTest {
         BookedRoom saveBookedRoom = buildMockBookedRoom();
         Mockito.when(bookedRoomRepository.save(any(BookedRoom.class))).thenReturn(saveBookedRoom);
         BookedRoomResponse response = bookedRoomService.save(request);
-        Assert.assertEquals(request.getCheckIn(), response.getCheckIn() );
+        Assert.assertEquals(request.getCheckIn(), response.getCheckIn());
         Assert.assertEquals(request.getCheckOut(), response.getCheckOut());
     }
 
@@ -166,7 +154,7 @@ public class BookedRoomServiceTest {
     public void validateFindHistoryClientsBookedRoomIsNull() throws ClientNotFoundException, RoomNotFoundException, CheckOutNotFoundException, CheckInNotFoundException, NoLastNameException, NoFirstNameException, NoRoomNumberException, NoRoomIdException, HotelIsNotBookedException {
         expectedException.expect(HotelIsNotBookedException.class);
         expectedException.expectMessage(NO_ROOM_IS_BOOKED_IN_THIS_HOTEL);
-        Mockito.when(bookedRoomRepository.findByCheckInBeforeAndCheckOutAfter(Mockito.any(),Mockito.any())).thenReturn(null);
+        Mockito.when(bookedRoomRepository.findByCheckInBeforeAndCheckOutAfter(Mockito.any(), Mockito.any())).thenReturn(null);
         bookedRoomService.findHistoryClients();
     }
 
@@ -175,7 +163,7 @@ public class BookedRoomServiceTest {
         expectedException.expect(CheckInNotFoundException.class);
         expectedException.expectMessage(THERE_IS_NO_CHECK_IN_DATE);
         List<BookedRoom> bookedRoomList = buildMockBookedRoomList();
-        Mockito.when(bookedRoomRepository.findByCheckInBeforeAndCheckOutAfter(Mockito.any(),Mockito.any())).thenReturn(bookedRoomList);
+        Mockito.when(bookedRoomRepository.findByCheckInBeforeAndCheckOutAfter(Mockito.any(), Mockito.any())).thenReturn(bookedRoomList);
         bookedRoomService.findHistoryClients();
     }
 
@@ -184,7 +172,7 @@ public class BookedRoomServiceTest {
         expectedException.expect(CheckOutNotFoundException.class);
         expectedException.expectMessage(THERE_IS_NO_CHECK_OUT_DATE);
         List<BookedRoom> bookedRoomList = buildMockBookedRoomList();
-        Mockito.when(bookedRoomRepository.findByCheckInBeforeAndCheckOutAfter(Mockito.any(),Mockito.any())).thenReturn(bookedRoomList);
+        Mockito.when(bookedRoomRepository.findByCheckInBeforeAndCheckOutAfter(Mockito.any(), Mockito.any())).thenReturn(bookedRoomList);
         BookedRoom bookedRoom = bookedRoomList.get(0);
         bookedRoom.setCheckIn(format.parse("2019-02-09"));
         bookedRoomService.findHistoryClients();
@@ -195,7 +183,7 @@ public class BookedRoomServiceTest {
         expectedException.expect(ClientNotFoundException.class);
         expectedException.expectMessage(CLIENT_WAS_NOT_FOUND);
         List<BookedRoom> bookedRoomList = buildMockBookedRoomList();
-        Mockito.when(bookedRoomRepository.findByCheckInBeforeAndCheckOutAfter(Mockito.any(),Mockito.any())).thenReturn(bookedRoomList);
+        Mockito.when(bookedRoomRepository.findByCheckInBeforeAndCheckOutAfter(Mockito.any(), Mockito.any())).thenReturn(bookedRoomList);
         BookedRoom bookedRoom = bookedRoomList.get(0);
         bookedRoom.setCheckIn(format.parse("2019-02-09"));
         bookedRoom.setCheckOut(format.parse("2019-02-12"));
@@ -207,7 +195,7 @@ public class BookedRoomServiceTest {
         expectedException.expect(NoFirstNameException.class);
         expectedException.expectMessage(CLIENT_HAS_NO_FIRST_NAME);
         List<BookedRoom> bookedRoomList = buildMockBookedRoomList();
-        Mockito.when(bookedRoomRepository.findByCheckInBeforeAndCheckOutAfter(Mockito.any(),Mockito.any())).thenReturn(bookedRoomList);
+        Mockito.when(bookedRoomRepository.findByCheckInBeforeAndCheckOutAfter(Mockito.any(), Mockito.any())).thenReturn(bookedRoomList);
         BookedRoom bookedRoom = bookedRoomList.get(0);
         bookedRoom.setCheckIn(format.parse("2019-02-09"));
         bookedRoom.setCheckOut(format.parse("2019-02-12"));
@@ -221,7 +209,7 @@ public class BookedRoomServiceTest {
         expectedException.expect(NoLastNameException.class);
         expectedException.expectMessage(CLIENT_HAS_NO_LAST_NAME);
         List<BookedRoom> bookedRoomList = buildMockBookedRoomList();
-        Mockito.when(bookedRoomRepository.findByCheckInBeforeAndCheckOutAfter(Mockito.any(),Mockito.any())).thenReturn(bookedRoomList);
+        Mockito.when(bookedRoomRepository.findByCheckInBeforeAndCheckOutAfter(Mockito.any(), Mockito.any())).thenReturn(bookedRoomList);
         BookedRoom bookedRoom = bookedRoomList.get(0);
         bookedRoom.setCheckIn(format.parse("2019-02-09"));
         bookedRoom.setCheckOut(format.parse("2019-02-12"));
@@ -236,7 +224,7 @@ public class BookedRoomServiceTest {
         expectedException.expect(RoomNotFoundException.class);
         expectedException.expectMessage(ROOM_WAS_NOT_FOUND);
         List<BookedRoom> bookedRoomList = buildMockBookedRoomList();
-        Mockito.when(bookedRoomRepository.findByCheckInBeforeAndCheckOutAfter(Mockito.any(),Mockito.any())).thenReturn(bookedRoomList);
+        Mockito.when(bookedRoomRepository.findByCheckInBeforeAndCheckOutAfter(Mockito.any(), Mockito.any())).thenReturn(bookedRoomList);
         BookedRoom bookedRoom = bookedRoomList.get(0);
         bookedRoom.setCheckIn(format.parse("2019-02-09"));
         bookedRoom.setCheckOut(format.parse("2019-02-12"));
@@ -250,7 +238,7 @@ public class BookedRoomServiceTest {
         expectedException.expect(NoRoomNumberException.class);
         expectedException.expectMessage(ROOM_HAS_NO_NUMBER);
         List<BookedRoom> bookedRoomList = buildMockBookedRoomList();
-        Mockito.when(bookedRoomRepository.findByCheckInBeforeAndCheckOutAfter(Mockito.any(),Mockito.any())).thenReturn(bookedRoomList);
+        Mockito.when(bookedRoomRepository.findByCheckInBeforeAndCheckOutAfter(Mockito.any(), Mockito.any())).thenReturn(bookedRoomList);
         BookedRoom bookedRoom = bookedRoomList.get(0);
         bookedRoom.setCheckIn(format.parse("2019-02-09"));
         bookedRoom.setCheckOut(format.parse("2019-02-12"));
@@ -266,7 +254,7 @@ public class BookedRoomServiceTest {
         expectedException.expect(NoRoomIdException.class);
         expectedException.expectMessage(ROOM_HAS_NO_ID);
         List<BookedRoom> bookedRoomList = buildMockBookedRoomList();
-        Mockito.when(bookedRoomRepository.findByCheckInBeforeAndCheckOutAfter(Mockito.any(),Mockito.any())).thenReturn(bookedRoomList);
+        Mockito.when(bookedRoomRepository.findByCheckInBeforeAndCheckOutAfter(Mockito.any(), Mockito.any())).thenReturn(bookedRoomList);
         BookedRoom bookedRoom = bookedRoomList.get(0);
         bookedRoom.setCheckIn(format.parse("2019-02-09"));
         bookedRoom.setCheckOut(format.parse("2019-02-12"));
@@ -278,10 +266,10 @@ public class BookedRoomServiceTest {
         bookedRoomService.findHistoryClients();
     }
 
-   @Test
+    @Test
     public void validateFindHistoryClients() throws ParseException, CheckOutNotFoundException, ClientNotFoundException, CheckInNotFoundException, RoomNotFoundException, NoLastNameException, NoFirstNameException, NoRoomNumberException, NoRoomIdException, HotelIsNotBookedException {
         List<BookedRoom> bookedRoomList = buildMockBookedRoomList();
-        Mockito.when(bookedRoomRepository.findByCheckInBeforeAndCheckOutAfter(Mockito.any(),Mockito.any())).thenReturn(bookedRoomList);
+        Mockito.when(bookedRoomRepository.findByCheckInBeforeAndCheckOutAfter(Mockito.any(), Mockito.any())).thenReturn(bookedRoomList);
         BookedRoom bookedRoom = bookedRoomList.get(0);
         bookedRoom.setCheckIn(format.parse("2019-02-09"));
         bookedRoom.setCheckOut(format.parse("2019-02-12"));
@@ -289,13 +277,13 @@ public class BookedRoomServiceTest {
         bookedRoom.setClient(client);
         Room room = buildMockRoom();
         bookedRoom.setRoom(room);
-        List<ClientHistoryResponse> bookedRoomResponseList = buidMockResponsList(bookedRoomList);
+        List<ClientHistoryResponse> bookedRoomResponseList = buildMockResponseList(bookedRoomList);
         bookedRoomService.findHistoryClients();
-        Assert.assertEquals(bookedRoomList.size(),bookedRoomResponseList.size());
+        Assert.assertEquals(bookedRoomList.size(), bookedRoomResponseList.size());
     }
 
     @Test
-    public void validateFindBookedRoomByRoomRoomIdIsNull() throws BookedRoomNotFoundException, RoomNotFoundException, ClientNotFoundException, NoFirstNameException, NoLastNameException, NoServicesOnThisListException {
+    public void validateFindBookedRoomByRoomRoomIdIsNull() throws Exception {
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage(ID_CAN_NOT_BE_NULL);
         Long roomId = null;
@@ -304,7 +292,7 @@ public class BookedRoomServiceTest {
     }
 
     @Test
-    public void validateFindBookedRoomByRoomRoomIsNull() throws BookedRoomNotFoundException, RoomNotFoundException, ClientNotFoundException, NoFirstNameException, NoLastNameException, NoServicesOnThisListException {
+    public void validateFindBookedRoomByRoomRoomIsNull() throws Exception {
         expectedException.expect(RoomNotFoundException.class);
         expectedException.expectMessage(ROOM_WAS_NOT_FOUND);
         Long roomId = 1L;
@@ -312,20 +300,20 @@ public class BookedRoomServiceTest {
         bookedRoomService.findBookedRoomByRoom(roomId);
     }
 
-   @Test
-    public void validateFindBookedRoomByRoomBookedRoomIsNull() throws BookedRoomNotFoundException, RoomNotFoundException, ClientNotFoundException, NoFirstNameException, NoLastNameException, NoServicesOnThisListException {
+    @Test
+    public void validateFindBookedRoomByRoomBookedRoomIsNull() throws Exception {
         expectedException.expect(BookedRoomNotFoundException.class);
         expectedException.expectMessage(THIS_ROOM_IS_NOT_BOOKED);
         Long roomId = 1L;
-        Room room =buildMockRoom();
+        Room room = buildMockRoom();
         Optional<Room> roomOptional = Optional.of(room);
         Mockito.when(roomRepository.findById(roomId)).thenReturn(roomOptional);
-        Mockito.when(bookedRoomRepository.findFirstByRoomAndCheckOutAfterOrderByCheckOutDesc(Mockito.any(), Mockito.any())).thenReturn(null);
+        Mockito.when(bookedRoomRepository.findFirstByRoomAndCheckInBeforeAndCheckOutAfterOrderByCheckOutDesc(Mockito.any(),Mockito.any(), Mockito.any())).thenReturn(null);
         bookedRoomService.findBookedRoomByRoom(roomId);
     }
 
     @Test
-    public void validateFindBookedRoomByRoomClientIsNull() throws BookedRoomNotFoundException, RoomNotFoundException, ParseException, ClientNotFoundException, NoFirstNameException, NoLastNameException, NoServicesOnThisListException {
+    public void validateFindBookedRoomByRoomClientIsNull() throws Exception {
         expectedException.expect(ClientNotFoundException.class);
         expectedException.expectMessage(CLIENT_NOT_FOUND);
         Long roomId = 1L;
@@ -333,13 +321,13 @@ public class BookedRoomServiceTest {
         Optional<Room> roomOptional = Optional.of(room);
         Mockito.when(roomRepository.findById(roomId)).thenReturn(roomOptional);
         BookedRoom bookedRoom = buildMockBookedRoom();
-        Mockito.when(bookedRoomRepository.findFirstByRoomAndCheckOutAfterOrderByCheckOutDesc(Mockito.any(), Mockito.any())).thenReturn(bookedRoom);
+        Mockito.when(bookedRoomRepository.findFirstByRoomAndCheckInBeforeAndCheckOutAfterOrderByCheckOutDesc(Mockito.any(),Mockito.any(), Mockito.any())).thenReturn(bookedRoom);
         bookedRoom.setClient(null);
         bookedRoomService.findBookedRoomByRoom(roomId);
     }
 
     @Test
-    public void validateFindBookedRoomByRoomFirstNameIsNull() throws BookedRoomNotFoundException, RoomNotFoundException, ParseException, ClientNotFoundException, NoFirstNameException, NoLastNameException, NoServicesOnThisListException {
+    public void validateFindBookedRoomByRoomFirstNameIsNull() throws Exception {
         expectedException.expect(NoFirstNameException.class);
         expectedException.expectMessage(NO_FIRST_NAME_FOUND);
         Long roomId = 1L;
@@ -347,7 +335,7 @@ public class BookedRoomServiceTest {
         Optional<Room> roomOptional = Optional.of(room);
         Mockito.when(roomRepository.findById(roomId)).thenReturn(roomOptional);
         BookedRoom bookedRoom = buildMockBookedRoom();
-        Mockito.when(bookedRoomRepository.findFirstByRoomAndCheckOutAfterOrderByCheckOutDesc(Mockito.any(), Mockito.any())).thenReturn(bookedRoom);
+        Mockito.when(bookedRoomRepository.findFirstByRoomAndCheckInBeforeAndCheckOutAfterOrderByCheckOutDesc(Mockito.any(),Mockito.any(), Mockito.any())).thenReturn(bookedRoom);
         Client client = buildMockClient();
         client.setFirstname(null);
         bookedRoom.setClient(client);
@@ -355,7 +343,7 @@ public class BookedRoomServiceTest {
     }
 
     @Test
-    public void validateFindBookedRoomByRoomLastNameIsNull() throws BookedRoomNotFoundException, RoomNotFoundException, ParseException, ClientNotFoundException, NoFirstNameException, NoLastNameException, NoServicesOnThisListException {
+    public void validateFindBookedRoomByRoomLastNameIsNull() throws Exception {
         expectedException.expect(NoLastNameException.class);
         expectedException.expectMessage(NO_LAST_NAME_WAS_FOUND);
         Long roomId = 1L;
@@ -363,15 +351,15 @@ public class BookedRoomServiceTest {
         Optional<Room> roomOptional = Optional.of(room);
         Mockito.when(roomRepository.findById(roomId)).thenReturn(roomOptional);
         BookedRoom bookedRoom = buildMockBookedRoom();
-        Mockito.when(bookedRoomRepository.findFirstByRoomAndCheckOutAfterOrderByCheckOutDesc(Mockito.any(), Mockito.any())).thenReturn(bookedRoom);
+        Mockito.when(bookedRoomRepository.findFirstByRoomAndCheckInBeforeAndCheckOutAfterOrderByCheckOutDesc(Mockito.any(),Mockito.any(), Mockito.any())).thenReturn(bookedRoom);
         Client client = buildMockClient();
         client.setLastname(null);
         bookedRoom.setClient(client);
         bookedRoomService.findBookedRoomByRoom(roomId);
     }
 
-   @Test
-    public void validateFindBookedRoomByRoomListOfServicesIsNull() throws BookedRoomNotFoundException, RoomNotFoundException, ParseException, ClientNotFoundException, NoFirstNameException, NoLastNameException, NoServicesOnThisListException {
+    @Test
+    public void validateFindBookedRoomByRoomListOfServicesIsNull() throws Exception {
         expectedException.expect(NoServicesOnThisListException.class);
         expectedException.expectMessage(THERE_ARE_NO_SERVICES_ON_THIS_LIST);
         Long roomId = 1L;
@@ -380,50 +368,159 @@ public class BookedRoomServiceTest {
         Mockito.when(roomRepository.findById(roomId)).thenReturn(roomOptional);
         BookedRoom bookedRoom = buildMockBookedRoom();
         bookedRoom.setServices(null);
-        Mockito.when(bookedRoomRepository.findFirstByRoomAndCheckOutAfterOrderByCheckOutDesc(Mockito.any(), Mockito.any())).thenReturn(bookedRoom);
+        Mockito.when(bookedRoomRepository.findFirstByRoomAndCheckInBeforeAndCheckOutAfterOrderByCheckOutDesc(Mockito.any(),Mockito.any(), Mockito.any())).thenReturn(bookedRoom);
         bookedRoomService.findBookedRoomByRoom(roomId);
     }
 
     @Test
-    public void validateFindBookedRoomByRoom() throws BookedRoomNotFoundException, RoomNotFoundException, ParseException, ClientNotFoundException, NoFirstNameException, NoLastNameException, NoServicesOnThisListException {
+    public void validateFindBookedRoomByRoom() throws Exception {
         Long roomId = 1L;
         Room room = buildMockRoom();
         Optional<Room> roomOptional = Optional.of(room);
         Mockito.when(roomRepository.findById(roomId)).thenReturn(roomOptional);
         BookedRoom bookedRoom = buildMockBookedRoom();
-        Mockito.when(bookedRoomRepository.findFirstByRoomAndCheckOutAfterOrderByCheckOutDesc(Mockito.any(), Mockito.any())).thenReturn(bookedRoom);
+        Mockito.when(bookedRoomRepository.findFirstByRoomAndCheckInBeforeAndCheckOutAfterOrderByCheckOutDesc(Mockito.any(),Mockito.any(), Mockito.any())).thenReturn(bookedRoom);
         bookedRoomService.findBookedRoomByRoom(roomId);
-        Assert.assertEquals(roomId,bookedRoom.getRoom().getId());
+        Assert.assertEquals(roomId, bookedRoom.getRoom().getId());
     }
 
     @Test
-    public void validateUpdateRoomIdIsNull() throws ParseException, BookedRoomNotFoundException, RoomNotFoundException, NoRoomNumberException {
+    public void validateUpdateRoomIdIsNull() throws Exception {
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage(ID_CAN_NOT_BE_NULL);
         BookedRoomRequest newRequest = buildMockBookedRoomRequest();
-        bookedRoomService.updateRoom(null,newRequest);
+        bookedRoomService.updateRoom(null, newRequest);
     }
 
     @Test
-    public void validateUpdateRoomBookedRoomIsNull() throws ParseException, BookedRoomNotFoundException, RoomNotFoundException, NoRoomNumberException {
+    public void validateUpdateRoomBookedRoomIsNull() throws Exception {
         expectedException.expect(BookedRoomNotFoundException.class);
         expectedException.expectMessage(BOOKEDROOM_NOT_FOUND);
         Long id = 1L;
         BookedRoomRequest newRequest = buildMockBookedRoomRequest();
-        bookedRoomService.updateRoom(id,newRequest);
+        bookedRoomService.updateRoom(id, newRequest);
     }
 
     @Test
-    public void validateUpdateRoomRequestIsNull() throws ParseException, BookedRoomNotFoundException, RoomNotFoundException, NoRoomNumberException {
+    public void validateUpdateRoomRequestIsNull() throws Exception {
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage(REQUEST_CAN_NOT_BE_NULL);
         Long id = 1L;
         BookedRoom bookedRoom = buildMockBookedRoom();
-       // Mockito.when(bookedRoomRepository.findById(id)).thenReturn(bookedRoom);
-        bookedRoomService.updateRoom(id,null);
+        Optional<BookedRoom> bookedRoomOptional = Optional.of(bookedRoom);
+        Mockito.when(bookedRoomRepository.findById(id)).thenReturn(bookedRoomOptional);
+        bookedRoomService.updateRoom(id, null);
     }
 
-    private List<ClientHistoryResponse> buidMockResponsList(List<BookedRoom> bookedRoomList) {
+    @Test
+    public void validateUpdateRoomRoomNumberIsNull() throws Exception {
+        expectedException.expect(NoRoomNumberException.class);
+        expectedException.expectMessage(THERE_IS_NO_ROOM_NUMBER_IN_THE_REQUEST);
+        Long id = 1L;
+        BookedRoom bookedRoom = buildMockBookedRoom();
+        Optional<BookedRoom> bookedRoomOptional = Optional.of(bookedRoom);
+        Mockito.when(bookedRoomRepository.findById(id)).thenReturn(bookedRoomOptional);
+        BookedRoomRequest newRequest = buildMockBookedRoomRequest();
+        newRequest.setRoom(0);
+        bookedRoomService.updateRoom(id, newRequest);
+    }
+
+    @Test
+    public void validateUpdateRoomCheckInIsNull() throws Exception {
+        expectedException.expect(CheckInNotFoundException.class);
+        expectedException.expectMessage(THERE_IS_NO_CHECK_IN_DATE);
+        Long id = 1L;
+        BookedRoom bookedRoom = buildMockBookedRoom();
+        Optional<BookedRoom> bookedRoomOptional = Optional.of(bookedRoom);
+        Mockito.when(bookedRoomRepository.findById(id)).thenReturn(bookedRoomOptional);
+        BookedRoomRequest newRequest = buildMockBookedRoomRequest();
+        newRequest.setCheckIn(null);
+        bookedRoomService.updateRoom(id, newRequest);
+    }
+
+    @Test
+    public void validateUpdateRoomCheckOutIsNull() throws Exception {
+        expectedException.expect(CheckOutNotFoundException.class);
+        expectedException.expectMessage(THERE_IS_NO_CHECK_OUT_DATE);
+        Long id = 1L;
+        BookedRoom bookedRoom = buildMockBookedRoom();
+        Optional<BookedRoom> bookedRoomOptional = Optional.of(bookedRoom);
+        Mockito.when(bookedRoomRepository.findById(id)).thenReturn(bookedRoomOptional);
+        BookedRoomRequest newRequest = buildMockBookedRoomRequest();
+        newRequest.setCheckOut(null);
+        bookedRoomService.updateRoom(id, newRequest);
+    }
+
+    @Test
+    public void validateUpdateRoomCheckInAfterCheckOut() throws Exception {
+        expectedException.expect(IllegalArgumentException.class);
+        expectedException.expectMessage(CHECK_IN_CAN_NOT_BE_AFTER_CHECK_OUT);
+        Long id = 1L;
+        BookedRoom bookedRoom = buildMockBookedRoom();
+        Optional<BookedRoom> bookedRoomOptional = Optional.of(bookedRoom);
+        Mockito.when(bookedRoomRepository.findById(id)).thenReturn(bookedRoomOptional);
+        BookedRoomRequest newRequest = buildMockBookedRoomRequest();
+        newRequest.setCheckIn(format.parse("2019-03-12"));
+        newRequest.setCheckOut(format.parse("2019-03-10"));
+        bookedRoomService.updateRoom(id, newRequest);
+    }
+
+    @Test
+    public void validateUpdateRoomBookedRoomResponse() throws Exception {
+        Long id = 1L;
+        BookedRoom bookedRoom = buildMockBookedRoom();
+        Optional<BookedRoom> bookedRoomOptional = Optional.of(bookedRoom);
+        Mockito.when(bookedRoomRepository.findById(id)).thenReturn(bookedRoomOptional);
+        BookedRoomRequest newRequest = buildMockBookedRoomRequest();
+        BookedRoom saveBookedRoom = buildMockBookedRoom();
+        Mockito.when(bookedRoomRepository.save(any(BookedRoom.class))).thenReturn(saveBookedRoom);
+        BookedRoomResponse response = bookedRoomService.updateRoom(id, newRequest);
+        Assert.assertEquals(newRequest.getCheckIn(), response.getCheckIn());
+        Assert.assertEquals(newRequest.getCheckOut(), response.getCheckOut());
+        Assert.assertEquals(newRequest.getRoom(), response.getRoom());
+    }
+
+    @Test
+    public void validateFindBookedRoomByClientClientIdIsNull() throws Exception {
+        expectedException.expect(IllegalArgumentException.class);
+        expectedException.expectMessage(CLIENT_ID_IS_NULL);
+        bookedRoomService.findBookedRoomByClient(null);
+    }
+
+    @Test
+    public void validateFindBookedRoomByClientClientIsNull() throws Exception {
+        expectedException.expect(ClientNotFoundException.class);
+        expectedException.expectMessage(CLIENT_WAS_NOT_FOUND);
+        Long id = 1L;
+        Mockito.when(clientRepository.findById(id)).thenReturn(null);
+        bookedRoomService.findBookedRoomByClient(id);
+    }
+
+    @Test
+    public void validateFindBookedRoomBookedRoomIsNull() throws Exception {
+        expectedException.expect(BookedRoomNotFoundException.class);
+        expectedException.expectMessage(BOOKEDROOM_NOT_FOUND);
+        Long id = 1L;
+        Client client = buildMockClient();
+        Optional<Client> clientOptional = Optional.of(client);
+        Mockito.when(clientRepository.findById(id)).thenReturn(clientOptional);
+        Mockito.when(bookedRoomRepository.findFirstByClientAndCheckOutAfterOrderByCheckOutDesc(any(), any())).thenReturn(null);
+        bookedRoomService.findBookedRoomByClient(id);
+    }
+
+    @Test
+    public void validateFindBookedRoomByClient() throws Exception {
+        Long id = 1L;
+        Client client = buildMockClient();
+        Optional<Client> clientOptional = Optional.of(client);
+        Mockito.when(clientRepository.findById(id)).thenReturn(clientOptional);
+        BookedRoom bookedRoom = buildMockBookedRoom();
+        Mockito.when(bookedRoomRepository.findFirstByClientAndCheckOutAfterOrderByCheckOutDesc(any(), any())).thenReturn(bookedRoom);
+        bookedRoomService.findBookedRoomByClient(id);
+        Assert.assertEquals(id, bookedRoom.getClient().getId());
+    }
+
+    private List<ClientHistoryResponse> buildMockResponseList(List<BookedRoom> bookedRoomList) {
         List<ClientHistoryResponse> responseList = new ArrayList<>();
         for (BookedRoom bookedRoom : bookedRoomList) {
             ClientHistoryResponse clientHistoryResponse = new ClientHistoryResponse();
@@ -438,13 +535,12 @@ public class BookedRoomServiceTest {
         return responseList;
     }
 
-    private List<BookedRoom> buildMockBookedRoomList(){
+    private List<BookedRoom> buildMockBookedRoomList() {
         List<BookedRoom> bookedRoomList = new ArrayList<>();
         BookedRoom bookedRoom = new BookedRoom();
         bookedRoomList.add(bookedRoom);
         return bookedRoomList;
     }
-
 
 
     private BookedRoom buildMockBookedRoom() throws ParseException {

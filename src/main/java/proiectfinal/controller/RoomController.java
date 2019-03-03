@@ -34,12 +34,12 @@ public class RoomController {
     }
 
     @GetMapping("/rooms/{id}")
-    public RoomResponse getRoomById(@PathVariable Long id) throws RoomNotFoundException {
+    public RoomResponse getRoomById(@PathVariable Long id) throws Exception {
         return roomService.findById(id);
     }
 
     @PutMapping("/rooms/{id}")
-    public RoomResponse updateRoom(@RequestBody RoomRequest newRoomRequest, @PathVariable Long id) throws RoomNotFoundException {
+    public RoomResponse updateRoom(@RequestBody RoomRequest newRoomRequest, @PathVariable Long id) throws Exception {
         return roomService.updateRoom(id, newRoomRequest);
     }
 
