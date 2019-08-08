@@ -6,4 +6,5 @@ import proiectfinal.model.Service;
 
 @Repository
 public interface ServiceReopository extends CrudRepository<Service, Long> {
+    Service findByServiceName(String serviceName);
 }

@@ -31,9 +31,9 @@ public class ServiceController {
         return serviceService.findById(id);
     }
 
-    @PutMapping("/services/{id}")
-    ServiceResponse updateService(@RequestBody ServiceRequest newServiceRequest, @PathVariable Long id) throws Exception {
-        return serviceService.updateService(id, newServiceRequest);
+    @PutMapping("/services/{serviceName}")
+    ServiceResponse updateService(@RequestBody ServiceRequest newServiceRequest, @PathVariable String serviceName) throws Exception {
+        return serviceService.updateService(serviceName, newServiceRequest);
     }
 
     @DeleteMapping("/services/{id}")

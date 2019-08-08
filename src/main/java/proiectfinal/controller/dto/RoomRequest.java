@@ -10,9 +10,7 @@ public class RoomRequest {
         return roomNumber;
     }
 
-    public void setRoomNumber(int roomNumber) {
-        this.roomNumber = roomNumber;
-    }
+    public void setRoomNumber(int roomNumber) { this.roomNumber = roomNumber; }
 
     public double getNightlyPrice() {
         return nightlyPrice;

@@ -38,9 +38,9 @@ public class RoomController {
         return roomService.findById(id);
     }
 
-    @PutMapping("/rooms/{id}")
-    public RoomResponse updateRoom(@RequestBody RoomRequest newRoomRequest, @PathVariable Long id) throws Exception {
-        return roomService.updateRoom(id, newRoomRequest);
+    @PutMapping("/rooms/{roomNumber}")
+    public RoomResponse updateRoom(@RequestBody RoomRequest newRoomRequest, @PathVariable int roomNumber){
+        return roomService.updateRoom(roomNumber, newRoomRequest);
     }
 
     @DeleteMapping("/rooms/{id}")

@@ -89,8 +89,8 @@ public class RoomService {
         roomRepository.deleteById(id);
     }
 
-    public RoomResponse updateRoom(Long id, RoomRequest newRoomRequest) throws Exception {
-        Room room = findRoom(id);
+    public RoomResponse updateRoom(int roomNumber, RoomRequest newRoomRequest) {
+        Room room = roomRepository.findByRoomNumber(roomNumber);
         room.setNumberPlaces(newRoomRequest.getNumberPlaces());
         room.setNightlyPrice(newRoomRequest.getNightlyPrice());
         Room saveRoom = roomRepository.save(room);

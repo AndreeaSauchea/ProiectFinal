@@ -90,8 +90,8 @@ public class ServiceService {
         serviceReopository.deleteById(id);
     }
 
-    public ServiceResponse updateService(Long id, ServiceRequest newServiceRequest) throws Exception {
-        Service service = findService(id);
+    public ServiceResponse updateService(String serviceName, ServiceRequest newServiceRequest) {
+        Service service = serviceReopository.findByServiceName(serviceName);
         service.setServiceDuration(newServiceRequest.getServiceDuration());
         service.setServicePrice(newServiceRequest.getServicePrice());
         Service saveService = serviceReopository.save(service);
